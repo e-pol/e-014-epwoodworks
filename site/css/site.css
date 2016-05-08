@@ -2,6 +2,50 @@
  * _variables.scss
   * sass file
  */
+/* color palette */
 /* corporate color palette */
+.ep-site-header {
+  background-color: #a9c4b5; }
+
+.ep-site-content {
+  height: 16em;
+  /*background-color : ;*/ }
+
+.ep-site-footer {
+  height: 6em;
+  background-color: #554836; }
+
+.ep-site-nav {
+  padding-bottom: 0em;
+  background-color: inherit; }
+  .ep-site-nav .navbar,
+  .ep-site-nav .navbar-default {
+    margin-bottom: 0em;
+    border: none;
+    background-color: inherit; }
+    .ep-site-nav .navbar .active,
+    .ep-site-nav .navbar-default .active {
+      background-color: inherit; }
+      .ep-site-nav .navbar .active a,
+      .ep-site-nav .navbar-default .active a {
+        background-color: inherit; }
+        .ep-site-nav .navbar .active a:hover,
+        .ep-site-nav .navbar-default .active a:hover {
+          background-color: inherit; }
+        .ep-site-nav .navbar .active a:focus,
+        .ep-site-nav .navbar-default .active a:focus {
+          background-color: inherit; }
+    .ep-site-nav .navbar .open,
+    .ep-site-nav .navbar-default .open {
+      background-color: #eed4d3; }
+      .ep-site-nav .navbar .open a,
+      .ep-site-nav .navbar-default .open a {
+        background-color: transparent; }
+        .ep-site-nav .navbar .open a:hover,
+        .ep-site-nav .navbar-default .open a:hover {
+          text-decoration: underline; }
+        .ep-site-nav .navbar .open a:focus,
+        .ep-site-nav .navbar-default .open a:focus {
+          background-color: #eed4d3; }
 
 /*# sourceMappingURL=site.css.map */

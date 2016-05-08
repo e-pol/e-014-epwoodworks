@@ -27,7 +27,11 @@ require.config({
   }
 });
 
-require(['site.shell'], function ( siteShell ) {
+require([
+  'site.shell',
+  'jquery',
+  'bootstrap'
+  ], function ( siteShell, $, bootstrap ) {
   "use strict";
 
   siteShell.init();

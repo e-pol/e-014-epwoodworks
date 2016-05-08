@@ -1,0 +1,34 @@
+.ep-site-nav {
+  padding-bottom: 0em;
+  background-color: inherit;
+  & .navbar,
+    .navbar-default {
+    margin-bottom: 0em;
+    border: none;
+    background-color: inherit;
+    & .active {
+      background-color: inherit;
+      & a {
+        background-color: inherit;
+        &:hover {
+          background-color: inherit;
+        }
+        &:focus {
+          background-color: inherit;
+        }
+      }
+    }
+    & .open {
+      background-color: $charming-pink;
+      & a {
+        background-color: transparent;
+        &:hover {
+          text-decoration: underline;
+        }
+        &:focus {
+          background-color: $charming-pink;
+        }
+      }
+    }
+  }
+}

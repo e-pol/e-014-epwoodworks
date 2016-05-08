@@ -1,0 +1,15 @@
+.ep-site-header {
+  background-color: $kind-green;
+  & .container {
+  }
+}
+
+.ep-site-content {
+  height           : 16em;
+  /*background-color : ;*/
+}
+
+.ep-site-footer {
+  height : 6em;
+  background-color: $van-dyke-brown;
+}

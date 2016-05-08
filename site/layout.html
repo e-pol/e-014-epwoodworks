@@ -8,73 +8,122 @@
 </head>
 <body>
 
-  <!-- SITE CONTAINING ELEMENT -->
+  <!--                               -->
+  <!-- BEGIN SITE CONTAINING ELEMENT -->
+  <!--                               -->
   <div id="site">
 
-    <!-- BEGIN SITE HEADER                        -->
-    <!--                                          -->
-    <!-- Begin Header wrapper for styling purpose -->
-    <!--                                          -->
-    <div class="wrapper">
+    <!--                                -->
+    <!-- BEGIN SITE HEADER              -->
+    <!--                                -->
+    <div class="ep-site-header wrapper">
 
-      <!-- Begin Header element container -->
-      <!--                                -->
-      <div class="ep-site-header">
+      <!-- Begin Header Bootstrap container -->
+      <div class="container">
 
-        <!-- Begin Header Bootstrap container -->
-        <!--                                  -->
-        <div class="container">
+        <!-- Begin Component /navigation/ -->
+        <div class="ep-site-nav col-md-12">
+          <nav class="navbar navbar-default">
+            <div class="container-fluid">
+              <!-- Brand and toggle get grouped for better mobile display -->
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">EP Wood Works</a>
+              </div>
 
+              <!-- Collect the nav links, forms, and other content for toggling -->
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                  <li class="active"><a href="#">Проекты <span class="sr-only">(current)</span></a></li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Стоимость <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Проектирования</a></li>
+                      <li><a href="#">Строительства</a></li>
+                    </ul>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Расчеты <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Балки</a></li>
+                      <li><a href="#">Стропилы</a></li>
+                      <li><a href="#">Столба</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="#">Контакты </a></li>
+                </ul>
+              </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+          </nav>
         </div>
-        <!-- End Header Bootstrap container -->
+        <!-- End Component /navigation/   -->
 
       </div>
-      <!-- End Header element container -->
+      <!-- End Header Bootstrap container -->
 
     </div>
-    <!-- End Header wrapper for styling purpose -->
-    <!--                                        -->
-    <!-- END SITE HEADER                        -->
+    <!--                                -->
+    <!-- END SITE HEADER                -->
+    <!--                                -->
 
 
-    <!-- BEGIN SITE CONTENT                        -->
-    <!--                                           -->
-    <!-- Begin Content Wrapper for styling purpose -->
-    <!--                                           -->
-    <div class="wrapper">
+    <!--                                -->
+    <!-- BEGIN SITE CONTENT             -->
+    <!--                                -->
+    <div class="ep-site-content wrapper">
+
+        <!-- Begin Content Bootstrap container -->
+        <div class="container">
+
+          <!-- Begin Component /breadcrumbs/ -->
+          <div class="ep-site-breadcrumbs"></div>
+          <!-- End Component /breadcrumbs/   -->
+
+          <!-- Begin Component /module/ -->
+          <div class="ep-site-module"></div>
+          <!-- End Component /module/   -->
+
+        </div>
+        <!-- End Content Bootstrap container  -->
 
     </div>
-    <!-- End Content wrapper for styling purpose -->
-    <!--                                         -->
-    <!-- END SITE CONTENT                        -->
+    <!--                                -->
+    <!-- END SITE CONTENT               -->
+    <!--                                -->
 
 
-    <!-- BEGIN SITE FOOTER                        -->
-    <!--                                          -->
-    <!-- Begin Footer wrapper for styling purpose -->
-    <!--                                          -->
-    <div class="wrapper">
-
-      <!-- Begin Footer element container -->
-      <!--                                -->
-      <div class="ep-site-footer">
+    <!--                                -->
+    <!-- BEGIN SITE FOOTER              -->
+    <!--                                -->
+    <div class="ep-site-footer wrapper">
 
         <!-- Begin Footer Bootstrap container -->
-        <!--                           -->
         <div class="container">
 
-        </div>
-        <!-- End Footer Bootstrap container -->
+          <!-- Begin Component /contacts/ -->
+          <div class="ep-site-contacts"></div>
+          <!-- End Component /contacts/   -->
+          <!-- Begin Component /sitemap/  -->
+          <div class="ep-site-sitemap"></div>
+          <!-- End Component /sitemap/    -->
 
-      </div>
-      <!-- End Footer element container -->
+        </div>
+        <!-- End Footer Bootstrap container   -->
 
     </div>
-    <!-- End Footer wrapper for styling purpose -->
-    <!--                                        -->
-    <!-- END SITE FOOTER                        -->
+    <!--                                -->
+    <!-- END SITE FOOTER                -->
+    <!--                                -->
 
   </div>
+  <!--                               -->
+  <!-- END SITE CONTAINING ELEMENT   -->
+  <!--                               -->
 <script data-main="js/site.js" src="js/libs/require/require.min.js"></script>
 </body>
 </html>
