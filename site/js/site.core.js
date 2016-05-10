@@ -39,9 +39,14 @@ define([
   //   with custom inheritable methods
   // Arguments :
   //   * method_list
-  //     ** backbone_component_list
+  //     ** component_list - components list to add method to
+  //     ** ref            - inheritable method reference
   // Action    :
-  //   * extend Backbone prototypes with custom methods
+  //   * filter out inherited props from method_list object
+  //   * iterate rest props (methods names)
+  //     * capitalize first letter of a component name
+  //     * if Backbone component prototype doesn`t have a method with
+  //     the same name, add it
   // Return    : none
   // Throws    : none
   //

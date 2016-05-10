@@ -28,7 +28,7 @@ define([
 
   // Create new channel object
   channel = _.extend({}, Backbone.Events);
-  channel.id = "SITE_CHANNEL";
+  channel.id = "EP_SITE_CHANNEL";
 
   // return channel object
   return channel;

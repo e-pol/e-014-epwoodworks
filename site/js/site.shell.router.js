@@ -25,7 +25,7 @@ define([
 
     var
       configMap = {
-        "id" : "SITE_SHELL_ROUTER",
+        "id" : "EP_SITE_SHELL_ROUTER",
         "routes" : {
           "projects(/:project_id)" : "onProjectsRoute",
           "*other"                 : "onDefaultRoute"

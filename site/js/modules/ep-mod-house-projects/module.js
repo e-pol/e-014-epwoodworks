@@ -26,12 +26,12 @@ define([
 
     var
       configMap = {
-
+        id : 'EP_MOD_HOUSE_PROJECTS'
       },
       stateMap = {
         $container : null
       },
-      ModuleHouseProjects, configModule, initModule;
+      ModuleHouseProjects, config, init;
 
     // --------------------- END MODULE SCOPE VARIABLES ---------------------
 
@@ -46,7 +46,29 @@ define([
     ModuleHouseProjects = Backbone.View.extend({
 
       initialize : function ( config_map ) {
+        this.subscribeOnInit();
         console.log('moduleHouseProjects initiated');
+      },
+
+      subscribeOnInit : function () {
+
+        //
+        // Event : requestProjectsRoute
+        //
+        this.subscribe({
+          subscriber_id : this.id,
+          sub_channel   : channel,
+          sub_name      : 'requestModuleInit',
+          callback      : this.onRequestModuleInit
+        });
+
+
+      },
+
+      onRequestModuleInit : function ( data ) {
+        if ( data.pub_data.requested_module_id === configMap.id ) {
+          console.log( data );
+        }
       }
 
     });
@@ -57,9 +79,9 @@ define([
 
     //-------------------------- BEGIN PUBLIC METHODS -----------------------
 
-    // Begin public method /configModule/
+    // Begin public method /config/
     //
-    // Example   : moduleHouseProjects.configModule()
+    // Example   : moduleHouseProjects.config()
     // Purpose   : Configure the module prior to initialization
     // Arguments : none
     // Action    :
@@ -69,12 +91,12 @@ define([
     // Throws    : JavaScript error object and stack trace on
     // unacceptable or missing arguments
     //
-    configModule = function () {
+    config = function () {
 
     };
-    // End public method /configModule/
+    // End Public method /config/
 
-    // Begin public method /initModule/
+    // Begin Public method /init/
     //
     // Example   : moduleHouseProjects.init( $('#div_id) )
     // Purpose   : Directs module to offer its capability to the user
@@ -87,18 +109,18 @@ define([
     // Returns   : none
     // Throws    : none
     //
-    initModule = function ( html_container ) {
+    init = function ( html_container ) {
       if ( html_container ) { stateMap.$container = html_container; }
       new ModuleHouseProjects( configMap );
     };
-    // End public method /initModule/
+    // End Public method /init/
 
     // ------------------------- END PUBLIC METHODS -------------------------
 
     // return public methods
     return {
-      configModule : configModule,
-      initModule   : initModule
+      config : config,
+      init   : init
     };
   }
 );
