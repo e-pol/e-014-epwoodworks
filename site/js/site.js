@@ -11,29 +11,46 @@
  */
 
 /*global
-  require
+ define
  */
 
-
-require.config({
-  baseUrl : 'js',
-  paths   : {
-    bootstrap  : 'libs/bootstrap/bootstrap.min',
-    jquery     : 'libs/jquery/jquery-1.12.3.min',
-    underscore : 'libs/underscore/underscore-min',
-    backbone   : 'libs/backbone/backbone-min',
-    text       : 'libs/require/text',
-    json       : 'libs/require/json'
-  }
-});
-
-require([
-  'site.shell',
+define([
   'jquery',
-  'bootstrap'
-  ], function ( siteShell, $, bootstrap ) {
+  'underscore',
+  'backbone',
+  'site.core',
+  'site.shell'
+], function ( $, _, Backbone, siteCore, siteShell ) {
   "use strict";
 
-  siteShell.init();
+  // ----------------- BEGIN MODULE SCOPE VARIABLES -----------------------
 
+  var init;
+
+  // --------------------- END MODULE SCOPE VARIABLES ---------------------
+
+
+  //-------------------------- BEGIN PUBLIC METHODS -----------------------
+
+  // Begin public method /init/
+  //
+  // Example   : site.init()
+  // Purpose   : Initializes new site
+  // Arguments : none
+  // Action    :
+  //   * Configure site core (Client side framework)
+  //   * Initialize new site shell
+  // Returns   : none
+  // Throws    : none
+  init = function () {
+    siteCore.config();
+    siteShell.init();
+  };
+  // End public method /init/
+
+  // ------------------------- END PUBLIC METHODS -------------------------
+
+
+  // return public methods
+  return { init : init };
 });

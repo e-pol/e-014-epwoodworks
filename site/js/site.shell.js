@@ -17,14 +17,23 @@
 define([
   'jquery',
   'underscore',
-  'backbone'
-  ], function ( $, _, Backbone ) {
+  'backbone',
+  'site.channel',
+  'site.shell.router',
+  'modules/ep-mod-house-projects/module'
+  ], function ( $, _, Backbone, channel, router,
+                moduleHouseProjects ) {
     "use strict";
 
     // ----------------- BEGIN MODULE SCOPE VARIABLES -----------------------
 
     var
-      SiteShell, initShell;
+      configMap = {
+        "id" : 'SITE_SHELL',
+        "subscription_list" : {}
+      },
+
+      SiteShell, init;
 
     // --------------------- END MODULE SCOPE VARIABLES ---------------------
 
@@ -35,13 +44,50 @@ define([
     //
     // Purpose : Main site controller
     // Returns : New instance
-      SiteShell = Backbone.View.extend({
+      SiteShell = Backbone.View.extend( {
 
-        initialize : function () {
-          console.log('siteShell initiated');
+        initialize: function () {
+          this.id = configMap.id;
+
+          this.subscribeOnInit();
+
+          router.init();
+          router.start();
+          console.log( 'siteShell initiated' );
+        },
+
+        subscribeOnInit: function () {
+          //
+          // requestProjectsRoute
+          //
+          this.subscribe({
+            subscriber_id : this.id,
+            sub_channel   : channel,
+            sub_name      : 'requestProjectsRoute',
+            callback      : this.onRequestProjectsRoute
+          });
+
+          //
+          // requestDefaultRoute
+          //
+          this.subscribe({
+            subscriber_id : this.id,
+            sub_channel   : channel,
+            sub_name      : 'requestDefaultRoute',
+            callback      : this.onRequestDefaultRoute
+          });
+
+        },
+
+        onRequestProjectsRoute : function ( data ) {
+          console.log('onRequestProjectsRoute');
+        },
+
+        onRequestDefaultRoute : function ( data ) {
+          console.log('onRequestDefaultRoute');
         }
+      });
 
-    });
     // End Constructor /SiteShell/
 
     // ---------------------- END MODULE CONSTRUCTORS -----------------------
@@ -58,7 +104,7 @@ define([
     //   Instantiates new site shell object (type of object is Backbone.View)
     // Returns   : none
     // Throws    : none
-    initShell = function () {
+    init = function () {
       new SiteShell();
     };
     // End public method /init/
@@ -66,6 +112,6 @@ define([
     // ------------------------- END PUBLIC METHODS -------------------------
 
     // return public methods
-    return { init : initShell };
+    return { init : init };
   }
 );
