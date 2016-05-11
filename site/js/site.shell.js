@@ -11,7 +11,7 @@
  */
 
 /*global
- define
+ window, define
  */
 
 define([
@@ -39,6 +39,7 @@ define([
         modules : {
           _state_map_tmpl_ : {
             is_active  : false,
+            hash       : null,
             route_data : {}
           }
         }
@@ -204,6 +205,7 @@ define([
         // Arguments :
         //   * data - publication data
         // Action    :
+        //   * restore to previous route if unallowed url
         //   * activate default module if needed
         //   * do nothing if active module requested with no route change
         //   * update module state map
@@ -215,7 +217,8 @@ define([
           var
             module_state_map, prev_state_map, prev_route_data,
             requested_module_id, proposed_route_data,
-            prev_active_module_id, active_module_id;
+            prev_active_module_id, active_module_id,
+            hash;
 
 
           // ----------------- BEGIN DEBUG FUNCTIONS -----------------------
@@ -241,16 +244,30 @@ define([
           prev_state_map        = this.getModuleStateMap( requested_module_id );
           prev_route_data       = prev_state_map.route_data;
           prev_active_module_id = stateMap.active_module_id;
+          hash                  = window.location.hash.substr(1);
 
           debug_info('Start');
 
-          // if requested module is not defined activate default one
+          //////////////////////////////////////////////////
+          //                                              //
+          //      >>>>>   !!!   NEED   !!!   <<<<<        //
+          //                                              //
+          //           prevent incorrect states           //
+          //           from getting to history            //
+          //                                              //
+          //////////////////////////////////////////////////
+
+
+          if ( requested_module_id === null && prev_active_module_id ) {
+            // restore previous route
+            window.location.hash = stateMap.modules[ prev_active_module_id ].hash;
+            return false;
+          }
+
+          // if requested module is not defined get default settings
           if ( requested_module_id === null ) {
-            this.activateModule({
-              requested_module_id   : stateMap.default_module_id,
-              prev_active_module_id : prev_active_module_id,
-              proposed_route_data   : null
-            });
+            requested_module_id = stateMap.default_module_id;
+            proposed_route_data = null;
           }
 
           // if requested active module and route was not changed return false
@@ -261,6 +278,7 @@ define([
 
           module_state_map = this
             .setModuleStateRoute( requested_module_id, proposed_route_data );
+          module_state_map.hash = hash;
 
           debug_info('Point 1');
 
