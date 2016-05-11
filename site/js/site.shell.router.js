@@ -52,21 +52,26 @@ define([
         console.log('siteRouter initiated');
       },
 
-      onProjectsRoute : function ( data ) {
+      onModuleRouteRequest : function ( pub_data ) {
         this.publish({
           publisher_id : this.id,
           pub_channel  : channel,
-          pub_name     : 'requestProjectsRoute',
-          pub_data     : data
+          pub_name     : 'moduleRouteRequest',
+          pub_data     : pub_data
+        });
+      },
+
+      onProjectsRoute : function ( data ) {
+        this.onModuleRouteRequest({
+          requested_module_id : 'EP_MOD_HOUSE_PROJECTS',
+          route_data          : data
         });
       },
 
       onDefaultRoute : function ( data ) {
-        this.publish({
-          publisher_id : this.id,
-          pub_channel  : channel,
-          pub_name     : 'requestDefaultRoute',
-          pub_data     : data
+        this.onModuleRouteRequest({
+          requested_module_id : null,
+          route_data          : data
         });
       }
 

@@ -133,7 +133,7 @@ define([
     pub_name     = pub_map.pub_name,
     pub_data     = pub_map;
 
-    if (true) {
+    if (false) {
       console.group('inheritable method : publish');
       console.log('publisher_id    : ' , publisher_id);
       console.log('pub_channel.id  : ' , pub_channel.id);

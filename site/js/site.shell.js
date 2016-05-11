@@ -34,11 +34,12 @@ define([
       },
 
       stateMap = {
-        active_module : null,
+        active_module_id  : null,
+        default_module_id : 'EP_MOD_LANDING_PAGE',
         modules : {
-          _state_map_template_ : {
-            is_active : false,
-            data      : {}
+          _state_map_tmpl_ : {
+            is_active  : false,
+            route_data : {}
           }
         }
       },
@@ -48,12 +49,22 @@ define([
     // --------------------- END MODULE SCOPE VARIABLES ---------------------
 
 
+    // --------------------- BEGIN MODULE UTILITIES -------------------------
+    // ----------------------- END MODULE UTILITIES -------------------------
+
+
     // -------------------- BEGIN MODULE CONSTRUCTORS -----------------------
 
     // Begin Constructor /SiteShell/
     //
-    // Purpose : Main site controller
-    // Returns : New instance
+    // Example   : new SiteShell()
+    // Purpose   : Create main site controller
+    // Arguments : none
+    // Action    :
+    //   *
+    // Returns   : site shell object
+    // Throws    : none
+    //
       SiteShell = Backbone.View.extend( {
 
         initialize: function () {
@@ -66,131 +77,259 @@ define([
           console.log( 'siteShell initiated' );
         },
 
-        subscribeOnInit: function () {
-
-          //
-          // Event : moduleInitiated
-          //
-
-          //
-          // Event : moduleActivated
-          //
-
-          //
-          // Event : requestProjectsRoute
-          //
-          this.subscribe({
-            subscriber_id : this.id,
-            sub_channel   : channel,
-            sub_name      : 'requestProjectsRoute',
-            callback      : this.onRequestProjectsRoute
-          });
-
-          //
-          // Event : requestDefaultRoute
-          //
-          this.subscribe({
-            subscriber_id : this.id,
-            sub_channel   : channel,
-            sub_name      : 'requestDefaultRoute',
-            callback      : this.onRequestDefaultRoute
-          });
-
-        },
-
-        // Begin Event handler /onRequestProjectsRoute/
+        // Begin Method /subscribeOnInit/
         //
-        // Example : siteShell.onRequestProjectsRoute( /*data*/ )
-        // Purpose   : Handle the event
-        // Arguments :
-        //   * data - pub/sub data
+        // Example   : siteRouter.subscribeOnInit();
+        // Purpose   : does all subscriptions on init
+        // Arguments : none
         // Action    :
-        //   *
+        //   * do all subscriptions
         // Return    : none
         // Throws    : none
         //
-        onRequestProjectsRoute : function ( data ) {
-          var
-            module_id    = 'EP_MOD_HOUSE_PROJECTS',
-            module_maps  = stateMap.modules,
-            module_state_map, proposed_data;
+        subscribeOnInit: function () {
+          this.subscribe({
+            subscriber_id : this.id,
+            sub_channel   : channel,
+            sub_name      : 'moduleRouteRequest',
+            callback      : this.manageModuleStates
+          });
+        },
+        // End Method /subscribeOnInit/
 
-          // validate pub data
-          if (false) {
+        // Begin Method /getModuleStateMap/
+        //
+        // Example   : siteShell.getModuleStateMap( 'module_id' )
+        // Purpose   : Return module state map
+        // Arguments :
+        //   * module_id - string
+        // Action    :
+        //   * return module state map or false
+        // Return    :
+        //   * module state map - if exist
+        //   * false            - if cannot get
+        // Throws    : none
+        //
+        getModuleStateMap : function ( module_id ) {
+          if ( stateMap.modules[ module_id ] ) {
+            return stateMap.modules[ module_id ];
+          }
+          return false;
+        },
+        // End Method /getModuleStateMap/
+
+        // Begin Method /setModuleStateRoute/
+        //
+        // Example   : siteShell.setModuleStateRoute( 'module_id', {...} )
+        // Purpose   : Set module route in stateMap
+        // Arguments :
+        //   * module_id
+        //   * proposed_route_data - proposed route data
+        //   * do_override         - force to override route data
+        // Action    :
+        //   * set new module map if needed and return it
+        //   * check if route was changed and return false
+        //   if override is not set true
+        //   * update route and return module state map
+        // Return    :
+        //   *
+        // Throws    : none
+        //
+        setModuleStateRoute : function ( module_id, proposed_route_data, do_override ) {
+          var module_state_map = stateMap.modules[ module_id ];
+
+          // create, populate, store and return new module state map
+          if ( ! module_state_map ) {
+            module_state_map = {};
+            $.extend( true, module_state_map, stateMap.modules._state_map_tmpl_);
+            module_state_map.route_data = proposed_route_data;
+            stateMap.modules[ module_id ] = module_state_map;
+            return module_state_map;
+          }
+
+          // Return false if route data was not changed and override not set
+          if ( module_state_map.route_data === proposed_route_data
+            && ! do_override ) {
             return false;
           }
 
-          proposed_data = data.pub_data;
+          // Update route data
+          module_state_map.route_data = proposed_route_data;
+          return module_state_map;
+        },
+        // End Method /setModuleStateRoute/
 
-          // If module has no state map, create it
-          if ( ! module_maps[ module_id ] ) {
-            module_state_map = {};
-            $.extend( true, module_state_map, module_maps._state_map_template_ );
-            module_maps[ module_id ] = module_state_map;
+        // Begin Method /setModuleStateActive/
+        //
+        // Example   : siteShell.setModuleStateActive( 'module_id );
+        // Purpose   : Set module active
+        // Arguments :
+        //   * module_id
+        // Action    :
+        //   * set previous module inactive
+        //   * set requested module active and return its map
+        // Return    :
+        //   * module_state_map
+        //   * true             - if module is active
+        //   * false            - if module state map is not on list
+        // Throw     : none
+        //
+        setModuleStateActive : function ( module_id ) {
+          var
+            module_state_map      = this.getModuleStateMap( module_id ),
+            prev_active_module_id = stateMap.active_module_id;
 
-            module_state_map.data = proposed_data;
+          if ( module_state_map ) {
+            if ( module_state_map.is_active ) { return true; }
 
-
-            ////////////////////////////////////
-            //                                //
-            //   Publish : requestModuleInit  //
-            //                                //
-            ////////////////////////////////////
-
-            this.publish({
-              publisher_id : this.id,
-              pub_channel  : channel,
-              pub_name     : 'requestModuleInit',
-              pub_data     : {
-                requested_module_id : module_id,
-                proposed_data       : module_state_map.data
-              }
-            });
-
-            debug_info('Created new module state map. Requested Module Init');
-
-            return true;
-          }
-
-          // If requested module is active
-          if ( module_maps[ module_id ].is_active ) {
-
-            // If data hasn`t been changed return
-            if ( module_state_map.data === proposed_data ){
-              return false;
+            // set previous module inactive
+            if ( prev_active_module_id !== null
+              && prev_active_module_id !== module_id) {
+              this.getModuleStateMap( prev_active_module_id ).is_active = false;
             }
 
+            // set requested module active
+            module_state_map.is_active = true;
+            stateMap.active_module_id = module_id;
+            return module_state_map;
+          }
+          return false;
+        },
+        // End Method /setModuleStateActive/
+
+        // Begin Method /manageModuleStates/
+        //
+        // Example   : siteShell.manageModuleStates( {...} )
+        // Purpose   : manage site states
+        // Arguments :
+        //   * data - publication data
+        // Action    :
+        //   * activate default module if needed
+        //   * do nothing if active module requested with no route change
+        //   * update module state map
+        //   * activate requested module
+        // Return    : none
+        // Throws    : none
+        //
+        manageModuleStates : function ( data ) {
+          var
+            module_state_map, prev_state_map, prev_route_data,
+            requested_module_id, proposed_route_data,
+            prev_active_module_id, active_module_id;
+
+
+          // ----------------- BEGIN DEBUG FUNCTIONS -----------------------
+
+          function debug_info(msg) {
+            console.group('onRequestRoute');
+            console.info('message              : ', msg);
+            console.info('pub/sub data         : ', data);
+            console.log( 'modules_state_map    : ', module_state_map);
+            console.log( 'requested_module_id  : ', requested_module_id);
+            console.log( 'proposed_route_data  : ', proposed_route_data);
+            console.log( 'prev_route_data      : ', prev_route_data);
+            console.log( 'prev_state_map       : ', prev_state_map);
+            console.log( 'stateMap             : ', stateMap);
+            console.groupEnd();
+          }
+
+          // -------------------- END DEBUG FUNCTIONS ---------------------
+
+
+          requested_module_id   = data.pub_data.requested_module_id;
+          proposed_route_data   = data.pub_data.route_data;
+          prev_state_map        = this.getModuleStateMap( requested_module_id );
+          prev_route_data       = prev_state_map.route_data;
+          prev_active_module_id = stateMap.active_module_id;
+
+          debug_info('Start');
+
+          // if requested module is not defined activate default one
+          if ( requested_module_id === null ) {
+            this.activateModule({
+              requested_module_id   : stateMap.default_module_id,
+              prev_active_module_id : prev_active_module_id,
+              proposed_route_data   : null
+            });
+          }
+
+          // if requested active module and route was not changed return false
+          if ( prev_active_module_id === requested_module_id
+            && prev_route_data === proposed_route_data ) {
+            return false;
+          }
+
+          module_state_map = this
+            .setModuleStateRoute( requested_module_id, proposed_route_data );
+
+          debug_info('Point 1');
+
+          if ( ! module_state_map.is_active ) {
+            module_state_map = this.setModuleStateActive( requested_module_id );
+          }
+
+          active_module_id = stateMap.active_module_id;
+
+          debug_info('Point 2');
+
+          this.activateModule({
+            requested_module_id   : active_module_id,
+            prev_active_module_id : prev_active_module_id,
+            proposed_route_data   : stateMap.modules[ active_module_id ]
+          });
+
+          debug_info('End');
+        },
+        // End Method /manageModuleStates/
+
+        // Begin Method /activateModule/
+        // Example : siteShell.activateModule( {...} )
+        // Purpose   : Activate or change requested module
+        // Arguments :
+        //   * data - publication data
+        // Action    :
+        //   * deactivate previous module if needed
+        //   * activate requested module
+        // Return    : none
+        // Throws    : none
+        //
+        activateModule : function ( data ) {
+          var
+            requested_module_id   = data.requested_module_id,
+            prev_active_module_id = data.prev_active_module_id,
+            proposed_route_data    = data.proposed_route_data;
+
+          if ( prev_active_module_id !== null
+            && prev_active_module_id !== requested_module_id  ) {
             this.publish({
               publisher_id : this.id,
               pub_channel  : channel,
-              pub_name     : 'requestModuleStateChange',
+              pub_name     : 'moduleDeactivateRequest',
               pub_data     : {
-                module_id       : module_id,
-                module_pub_data : data.pub_data
+                requested_module_id : prev_active_module_id
               }
             });
-
-            debug_info('New data redirected to active module');
-
-            return true;
           }
 
-          function debug_info(msg) {
-            console.group('onRequestProjectsRoute');
-            console.info('message             : ', msg);
-            console.info('pub/sub data        : ', data);
-            console.log( 'requested module_id : ', module_id);
-            console.log( 'proposed_data       : ', proposed_data);
-            console.log( 'module_state_map    : ', module_state_map);
-            console.log( 'stateMap            : ', stateMap);
-            console.groupEnd();
-          }
-        },
-        // End Event handler /onRequestProjectsRoute/
+          //////////////////////////////////////////////////
+          //                                              //
+          //      >>>>>   !!!   NEED   !!!   <<<<<        //
+          //                                              //
+          //  publish  after the first request succeeded  //
+          //                                              //
+          //////////////////////////////////////////////////
 
-        onRequestDefaultRoute : function ( data ) {
-          console.log('onRequestDefaultRoute');
+          this.publish({
+            publisher_id : this.id,
+            pub_channel  : channel,
+            pub_name     : 'moduleGenericRequest',
+            pub_data     : {
+              requested_module_id : requested_module_id,
+              proposed_route_data : proposed_route_data
+            }
+          });
         }
+        // End Method /activateModule/
       });
 
     // End Constructor /SiteShell/
@@ -200,7 +339,7 @@ define([
 
     //-------------------------- BEGIN PUBLIC METHODS -----------------------
 
-    // Begin public method /init/
+    // Begin Public method /init/
     //
     // Example   : siteShell.init()
     // Purpose   : Instantiate new site shell
@@ -212,7 +351,7 @@ define([
     init = function () {
       new SiteShell();
     };
-    // End public method /init/
+    // End Public method /init/
 
     // ------------------------- END PUBLIC METHODS -------------------------
 

@@ -53,21 +53,56 @@ define([
       subscribeOnInit : function () {
 
         //
-        // Event : requestProjectsRoute
+        // Event : requestModuleStart
         //
         this.subscribe({
           subscriber_id : this.id,
           sub_channel   : channel,
-          sub_name      : 'requestModuleInit',
-          callback      : this.onRequestModuleInit
+          sub_name      : 'requestModuleStart',
+          callback      : this.onRequestModuleStart
         });
 
+        //
+        // Event : requestModuleActivation
+        //
+        this.subscribe({
+          subscriber_id : this.id,
+          sub_channel   : channel,
+          sub_name      : 'requestModuleActivation',
+          callback      : this.onRequestModuleActivation
+        });
 
       },
 
-      onRequestModuleInit : function ( data ) {
+      onRequestModuleStart : function ( data ) {
+
+        function debug_info(msg) {
+          console.group('onRequestModuleStart');
+          console.info('message             : ', msg);
+          console.info('pub/sub data        : ', data);
+          console.log( 'requested_module_id : ', data.pub_data.requested_module_id);
+          console.log( 'proposed_data       : ', data.pub_data.proposed_data);
+          console.log( 'stateMap            : ', stateMap);
+          console.groupEnd();
+        }
         if ( data.pub_data.requested_module_id === configMap.id ) {
-          console.log( data );
+          debug_info('Module Start requested');
+        }
+      },
+
+      onRequestModuleActivation : function ( data ) {
+
+        function debug_info(msg) {
+          console.group('onRequestModuleActivation');
+          console.info('message             : ', msg);
+          console.info('pub/sub data        : ', data);
+          console.log( 'requested_module_id : ', data.pub_data.requested_module_id);
+          console.log( 'proposed_data       : ', data.pub_data.proposed_data);
+          console.log( 'stateMap            : ', stateMap);
+          console.groupEnd();
+        }
+        if ( data.pub_data.requested_module_id === configMap.id ) {
+          debug_info('Module Activation requested');
         }
       }
 
