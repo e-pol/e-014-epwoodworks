@@ -18,8 +18,8 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'site.core',
-  'site.shell'
+  'shell/site.core',
+  'shell/site.shell'
 ], function ( $, _, Backbone, siteCore, siteShell ) {
   "use strict";
 

@@ -24,7 +24,9 @@ require.config({
     underscore : 'libs/underscore/underscore-min',
     backbone   : 'libs/backbone/backbone-min',
     text       : 'libs/require/text',
-    json       : 'libs/require/json'
+    json       : 'libs/require/json',
+    shell      : 'shell/',
+    channel    : 'shell/site.channel'
   },
   shim    : {
     'backbone'   : {
@@ -43,7 +45,7 @@ require.config({
 
 require([
   'bootstrap',
-  'site'
+  'shell/site'
 ], function ( bootstrap, site ) {
   "use strict";
 

@@ -17,7 +17,7 @@
 define([
   'underscore',
   'backbone',
-  'site.channel'
+  'channel'
   ], function ( _, Backbone, channel) {
   "use strict";
 

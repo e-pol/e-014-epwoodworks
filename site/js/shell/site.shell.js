@@ -18,8 +18,8 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'site.channel',
-  'site.shell.router',
+  'channel',
+  'shell/site.shell.router',
   'modules/ep-mod-house-projects/module'
   ], function ( $, _, Backbone, channel, router,
                 moduleHouseProjects ) {
@@ -224,6 +224,9 @@ define([
           // ----------------- BEGIN DEBUG FUNCTIONS -----------------------
 
           function debug_info(msg) {
+
+            return;
+
             console.group('onRequestRoute');
             console.info('message              : ', msg);
             console.info('pub/sub data         : ', data);
@@ -260,7 +263,7 @@ define([
 
           if ( requested_module_id === null && prev_active_module_id ) {
             // restore previous route
-            window.location.hash = stateMap.modules[ prev_active_module_id ].hash;
+            //window.location.hash = stateMap.modules[ prev_active_module_id ].hash;
             return false;
           }
 
@@ -315,7 +318,7 @@ define([
           var
             requested_module_id   = data.requested_module_id,
             prev_active_module_id = data.prev_active_module_id,
-            proposed_route_data    = data.proposed_route_data;
+            proposed_route_data   = data.proposed_route_data;
 
           if ( prev_active_module_id !== null
             && prev_active_module_id !== requested_module_id  ) {

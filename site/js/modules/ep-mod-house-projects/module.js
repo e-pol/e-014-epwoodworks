@@ -11,15 +11,22 @@
  */
 
 /*global
- define
+ require, define
  */
+
+require.config({
+  paths   : {
+    epModHouseProjects : 'modules/ep-mod-house-projects/'
+  }
+});
 
 define([
   'jquery',
   'underscore',
   'backbone',
-  'site.channel'
-  ], function( $, _, Backbone, channel ) {
+  'channel',
+  'epModHouseProjects/views/main.view'
+  ], function( $, _, Backbone, channel, MainView ) {
   "use strict";
 
     // ----------------- BEGIN MODULE SCOPE VARIABLES -----------------------
@@ -29,7 +36,13 @@ define([
         id : 'EP_MOD_HOUSE_PROJECTS'
       },
       stateMap = {
-        $container : null
+        $container : null,
+        is_active  : false,
+        hash       : null,
+        route_data : {},
+        subs       : {
+          mainView : null
+        }
       },
       ModuleHouseProjects, config, init;
 
@@ -52,59 +65,55 @@ define([
 
       subscribeOnInit : function () {
 
-        //
-        // Event : requestModuleStart
-        //
-        this.subscribe({
+        this.subscribe( {
           subscriber_id : this.id,
           sub_channel   : channel,
-          sub_name      : 'requestModuleStart',
-          callback      : this.onRequestModuleStart
-        });
-
-        //
-        // Event : requestModuleActivation
-        //
-        this.subscribe({
-          subscriber_id : this.id,
-          sub_channel   : channel,
-          sub_name      : 'requestModuleActivation',
-          callback      : this.onRequestModuleActivation
-        });
+          sub_name      : 'moduleGenericRequest',
+          callback      : this.onModuleGenericRequest
+        } );
 
       },
 
-      onRequestModuleStart : function ( data ) {
+
+        onModuleGenericRequest : function ( data ) {
+
+          var is_active ;
+
+          is_active = stateMap.is_active;
 
         function debug_info(msg) {
-          console.group('onRequestModuleStart');
+          console.group('onModuleGenericRequest');
           console.info('message             : ', msg);
           console.info('pub/sub data        : ', data);
           console.log( 'requested_module_id : ', data.pub_data.requested_module_id);
-          console.log( 'proposed_data       : ', data.pub_data.proposed_data);
+          console.log( 'pud_data            : ', data.pub_data);
           console.log( 'stateMap            : ', stateMap);
           console.groupEnd();
         }
+
         if ( data.pub_data.requested_module_id === configMap.id ) {
-          debug_info('Module Start requested');
+
+          debug_info('moduleGenericRequest captured');
+
+          if ( ! is_active ) { this.activate(); }
+
         }
       },
 
-      onRequestModuleActivation : function ( data ) {
-
-        function debug_info(msg) {
-          console.group('onRequestModuleActivation');
-          console.info('message             : ', msg);
-          console.info('pub/sub data        : ', data);
-          console.log( 'requested_module_id : ', data.pub_data.requested_module_id);
-          console.log( 'proposed_data       : ', data.pub_data.proposed_data);
-          console.log( 'stateMap            : ', stateMap);
-          console.groupEnd();
-        }
-        if ( data.pub_data.requested_module_id === configMap.id ) {
-          debug_info('Module Activation requested');
-        }
+      // Begin method /activate/
+      //
+      // Example : module.activate()
+      // Purpose   : Activate module dependencies
+      // Arguments : none
+      // Action    :
+      //   * return module state map or false
+      // Return    : none
+      // Throws    : none
+      //
+      activate : function () {
+        stateMap.subs.mainView = new MainView();
       }
+      // End Method /activate/
 
     });
     // End Constructor /ModuleHouseProjects/
@@ -114,7 +123,7 @@ define([
 
     //-------------------------- BEGIN PUBLIC METHODS -----------------------
 
-    // Begin public method /config/
+    // Begin Public method /config/
     //
     // Example   : moduleHouseProjects.config()
     // Purpose   : Configure the module prior to initialization
@@ -134,11 +143,11 @@ define([
     // Begin Public method /init/
     //
     // Example   : moduleHouseProjects.init( $('#div_id) )
-    // Purpose   : Directs module to offer its capability to the user
+    // Purpose   : Direct module to offer its capability to the user
     // Arguments : none
     // Action    :
-    //   Appends the module elem to the provided container and fills
-    //   it with HTML content. It then initializes elements,
+    //   Append the module elem to the provided container and fill
+    //   it with HTML content. Then initialize elements,
     //   events, and handlers to provide the user with a module
     //   interface
     // Returns   : none
