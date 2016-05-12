@@ -14,6 +14,20 @@
  require, define
  */
 
+// The module agent API
+// -----------------
+//
+// The module agent is available at requireJS path:
+// 'modules/ep-mod-house-projects/module'.
+//
+// The agent provides public module methods
+//
+// Its Public methods include:
+//   * init() - instantiate new module agent. If module agent has
+//   been initiated previously it does nothing and return false
+//   * config() - set module adjustments
+//
+
 require.config({
   paths   : {
     epModHouseProjects : 'modules/ep-mod-house-projects/'
@@ -26,60 +40,127 @@ define([
   'backbone',
   'channel',
   'epModHouseProjects/views/main.view'
-  ], function( $, _, Backbone, channel, MainView ) {
+  ], function( $, _, Backbone, globalChannel, mainView ) {
   "use strict";
 
     // ----------------- BEGIN MODULE SCOPE VARIABLES -----------------------
 
     var
       configMap = {
-        id : 'EP_MOD_HOUSE_PROJECTS'
-      },
-      stateMap = {
-        $container : null,
-        is_active  : false,
-        hash       : null,
-        route_data : {},
-        subs       : {
-          mainView : null
+        mod_id : 'EP_MOD_HOUSE_PROJECTS',
+        module : {
+          $container : $('ep-mod-house-projects'),
+          do_init    : false,
+          do_start   : false,
+          main       : mainView
         }
       },
-      ModuleHouseProjects, config, init;
+      stateMap = {
+        $container   : null,
+        is_initiated : false,
+        is_active    : false,
+        mod_agent    : null,
+        module       : null,
+        module_state_map : {
+          is_initiated : false,
+          is_active    : false
+        }
+      },
+      EPModHouseProjectsAgent, config, init;
 
     // --------------------- END MODULE SCOPE VARIABLES ---------------------
 
 
     // -------------------- BEGIN MODULE CONSTRUCTORS -----------------------
 
-    // Begin Constructor /ModuleHouseProjects/
+    // Begin Constructor /EPModHouseProjectsAgent/
     //
-    // Purpose : Main module controller
+    // Purpose : Module agent
     // Returns : New instance
     //
-    ModuleHouseProjects = Backbone.View.extend({
+    EPModHouseProjectsAgent = Backbone.View.extend({
 
-      initialize : function ( config_map ) {
+      initialize : function ( init_data ) {
+        var init_data = init_data || configMap;
+
         this.subscribeOnInit();
-        console.log('moduleHouseProjects initiated');
+        this.id = init_data.mod_id;
+
+        if ( configMap.module.do_init ) {
+          this.initModule();
+        }
+
+        if ( configMap.module.do_start ) {
+          this.startModule();
+        }
+
+        console.log('(epModHouseProjects) agent initiated');
       },
 
       subscribeOnInit : function () {
 
         this.subscribe( {
           subscriber_id : this.id,
-          sub_channel   : channel,
-          sub_name      : 'moduleGenericRequest',
-          callback      : this.onModuleGenericRequest
+          sub_channel   : globalChannel,
+          sub_name      : 'ep-mod-start-request',
+          callback      : function ( data ) {
+            if ( data.pub_data.requested_module_id === this.id ) {
+              this.startModule( data.pub_data.data );
+            }
+          }
+
         } );
+
+        this.subscribe( {
+          subscriber_id : this.id,
+          sub_channel   : globalChannel,
+          sub_name      : 'ep-mod-update-request',
+          callback      : function ( data ) {
+            if ( data.pub_data.requested_module_id === this.id ) {
+              this.updateModule( data.pub_data.data );
+            }
+          }
+        } );
+
+        this.subscribe( {
+          subscriber_id : this.id,
+          sub_channel   : globalChannel,
+          sub_name      : 'ep-mod-stop-request',
+          callback      : function ( data ) {
+            if ( data.pub_data.requested_module_id === this.id ) {
+              this.stopModule( data.pub_data.data );
+            }
+          }
+        } );
+
+      },
+
+      configModule : function ( config_map ) {
+
+      },
+
+      initModule : function ( init_data ) {
+
+      },
+
+      startModule : function ( data ) {
+        console.info( 'startModule' );
+      },
+
+      stopModule : function ( data ) {
+        console.log( 'stopModule' );
+      },
+
+      updateModule : function ( data ) {
+        console.log( 'updateModule' );
+      },
+
+      requestService : function ( data ) {
 
       },
 
 
         onModuleGenericRequest : function ( data ) {
-
-          var is_active ;
-
-          is_active = stateMap.is_active;
 
         function debug_info(msg) {
           console.group('onModuleGenericRequest');
@@ -91,32 +172,17 @@ define([
           console.groupEnd();
         }
 
-        if ( data.pub_data.requested_module_id === configMap.id ) {
+        if ( data.pub_data.requested_module_id === this.id ) {
 
           debug_info('moduleGenericRequest captured');
 
-          if ( ! is_active ) { this.activate(); }
+          this.startModController( data.pub_data );
 
         }
-      },
-
-      // Begin method /activate/
-      //
-      // Example : module.activate()
-      // Purpose   : Activate module dependencies
-      // Arguments : none
-      // Action    :
-      //   * return module state map or false
-      // Return    : none
-      // Throws    : none
-      //
-      activate : function () {
-        stateMap.subs.mainView = new MainView();
       }
-      // End Method /activate/
 
     });
-    // End Constructor /ModuleHouseProjects/
+    // End Constructor /EPModHouseProjectsAgent/
 
     // ---------------------- END MODULE CONSTRUCTORS -----------------------
 
@@ -135,7 +201,7 @@ define([
     // Throws    : JavaScript error object and stack trace on
     // unacceptable or missing arguments
     //
-    config = function () {
+    config = function ( config_data ) {
 
     };
     // End Public method /config/
@@ -153,9 +219,12 @@ define([
     // Returns   : none
     // Throws    : none
     //
-    init = function ( html_container ) {
-      if ( html_container ) { stateMap.$container = html_container; }
-      new ModuleHouseProjects( configMap );
+    init = function ( init_data ) {
+      if ( ! stateMap.is_initiated ) {
+        stateMap.mod_agent = new EPModHouseProjectsAgent();
+        return true;
+      }
+      return false;
     };
     // End Public method /init/
 

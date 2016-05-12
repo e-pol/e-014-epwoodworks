@@ -27,8 +27,15 @@ define([
       configMap = {
         "id" : "EP_SITE_SHELL_ROUTER",
         "routes" : {
-          "projects(/:project_id)" : "onProjectsRoute",
-          "*other"                 : "onDefaultRoute"
+          "( )"                    : "requestModLandingPage",
+          "costs(/:section)"       : "requestModCosts",
+          "costs/api/:request"     : "requestModCostsApi",
+          "projects(/:project)"    : "requestModHouseProjects",
+          "projects/api/:request"  : "requestModHouseProjectsApi",
+          "calcs(/:calc)"          : "requestModEngineerCalcs",
+          "calcs/api/:request"     : "requestModEngineerCalcsApi",
+          "contacts(/:contact)"    : "requestModContacts",
+          "*other"                 : "requestDefault"
         }
       },
       stateMap = {},
@@ -48,28 +55,124 @@ define([
     SiteRouter = Backbone.Router.extend({
 
       initialize : function () {
-        this.id = configMap.id;
         console.log('siteRouter initiated');
       },
 
-      onModuleRouteRequest : function ( pub_data ) {
+      // Begin Method /requestMod/
+      //
+      // Example   : siteRouter.requestMod( {...} )
+      // Purpose   :
+      //   publish request for module that need the same container
+      // Arguments :
+      //   * standard publication map
+      // Action    :
+      //   * publish request data
+      // Return    : none
+      // Throw     : none
+      //
+      requestMod : function ( pub_data ) {
         this.publish({
           publisher_id : this.id,
           pub_channel  : channel,
-          pub_name     : 'moduleRouteRequest',
+          pub_name     : 'ep-mod-request',
           pub_data     : pub_data
         });
       },
+      // End Method /requestMod/
 
-      onProjectsRoute : function ( data ) {
-        this.onModuleRouteRequest({
-          requested_module_id : 'EP_MOD_HOUSE_PROJECTS',
+      // Begin Method /requestModApi/
+      //
+      // Example   : siteRouter.requestModApi( {...} )
+      // Purpose   :
+      //   publish request for module api
+      // Arguments :
+      //   * standard publication map
+      // Action    :
+      //   * publish request data
+      // Return    : none
+      // Throw     : none
+      //
+      requestModApi : function ( pub_data ) {
+        this.publish({
+          publisher_id : this.id,
+          pub_channel  : channel,
+          pub_name     : 'ep-mod-api-request',
+          pub_data     : pub_data
+        });
+      },
+      // End Method /requestModApi/
+
+
+      // ------------ BEGIN MODULE DEPENDANT METHODS ------------------------
+
+      requestModLandingPage : function ( data ) {
+        this.requestMod({
+          requested_module_id : 'EP_MOD_LANDING_PAGE',
           route_data          : data
         });
       },
 
-      onDefaultRoute : function ( data ) {
-        this.onModuleRouteRequest({
+      requestModCosts : function ( data ) {
+        this.requestMod({
+          requested_module_id : 'EP_MOD_COSTS',
+          route_data          : data
+        });
+      },
+
+      requestModEngineerCalcs : function ( data ) {
+        this.requestMod({
+          requested_module_id : 'EP_MOD_ENGINEER_CALCS',
+          route_data          : data
+        });
+      },
+
+      requestModContacts : function ( data ) {
+        this.requestMod({
+          requested_module_id : 'EP_MOD_CONTACTS',
+          route_data          : data
+        });
+      },
+
+      // Begin Method /requestModProjects/
+      //
+      // Purpose   :
+      //   request module ep-mod-house-projects to offer its capabilities
+      //   to user
+      // Arguments :
+      //   * route data
+      // Action    :
+      //   * make pub_data map
+      //   * call requestMod method with pub_data as parameter
+      requestModHouseProjects : function ( data ) {
+        this.requestMod({
+          requested_module_id : 'EP_MOD_HOUSE_PROJECTS',
+          route_data          : data
+        });
+      },
+      // End Method /requestModProjects/
+
+      // Begin Method /requestModProjectsApi/
+      // Purpose   :
+      //   request module ep-mod-house-projects to offer its services
+      //   to client, not user
+      // Arguments :
+      //   * route data
+      // Action    :
+      //   * make pub_data map
+      //   * call requestModApi method with pub_data as parameter
+      requestModHouseProjectsApi : function ( data ) {
+        this.requestModApi({
+          requested_module_id : 'EP_MOD_HOUSE_PROJECTS',
+          route_data          : data
+        });
+      },
+      // End Method /requestModProjectsApi/
+
+      // ---------------- END MODULE DEPENDANT METHODS ----------------------
+
+
+      requestDefault : function ( data ) {
+        this.requestMod({
           requested_module_id : null,
           route_data          : data
         });
