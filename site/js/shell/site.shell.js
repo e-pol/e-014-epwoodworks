@@ -29,19 +29,31 @@ define([
 
     var
       configMap = {
-        "id"                : "EP_SITE_SHELL",
-        "default_module_id" : "EP_MOD_LANDING_PAGE",
-        "subscription_list" : {}
-      },
-
-      stateMap = {
-        active_module_id  : null,
-        modules           : {
+        "id"      : "EP_SITE_SHELL",
+        "modules" : {
+          "default_mod_id" : "EP_MOD_LANDING_PAGE",
           _state_map_tmpl_ : {
             agent      : null,
             is_active  : false,
             route_data : {}
           }
+        },
+        // begin remove
+        "default_module_id" : "EP_MOD_LANDING_PAGE"
+        // end remove
+      },
+
+      stateMap = {
+        active_module_id  : null,
+        modules           : {
+          $container   : null,
+          // begin remove
+          _state_map_tmpl_ : {
+            agent      : null,
+            is_active  : false,
+            route_data : {}
+          }
+          // end remove
         }
       },
 
@@ -68,7 +80,12 @@ define([
           this.id = configMap.id;
 
           this.subscribeOnInit();
-          moduleHouseProjects.init();
+
+
+
+          moduleHouseProjects.init( {
+            $container : $('#ep-site-mod-container')
+          } );
 
           router.init();
           router.start();
@@ -207,15 +224,23 @@ define([
         //
         // Example   : siteShell.manageModuleRequest( {...} )
         // Purpose   : manage site states
+        //   * init, start, stop, update modules
+        //   * request module api without changing state
         // Arguments :
         //   * data - publication data
         // Action    :
-        //   * restore to previous route if unallowed url
-        //   * activate default module if needed
-        //   * do nothing if active module requested with no route change
-        //   * update module state map
-        //   * activate requested module
-        // Return    : none
+        //   * a fork updates stateMap if needed
+        //   * fork-01 - start default module if route is not proposed
+        //     or it`s incorrect and no active module was set previously
+        //   * fork-02 - do nothing if route is not proposed or it`s incorrect,
+        //     but active module was set previously
+        //   * fork-03 - if any module other than active was requested,
+        //     stop the active and start requested one
+        //   * fork-04 - if active module was requested and route differs from
+        //     previous one update module
+        // Return    :
+        //   * true  - if any fork succeeded
+        //   * false - if none fork succeeded
         // Throws    : none
         //
         manageModuleRequest : function ( data ) {
@@ -267,13 +292,13 @@ define([
               data                : null
             });
             debug_info('fork-01');
-            return;
+            return true;
           }
 
           // fork-02
           if ( requested_module_id === null ) {
             debug_info('fork-02');
-            return;
+            return true;
           }
 
           // fork-03
@@ -292,7 +317,7 @@ define([
             });
 
             debug_info('fork-03');
-            return;
+            return true;
           }
 
           // fork-04
@@ -306,8 +331,9 @@ define([
             });
 
             debug_info('fork-04');
-            return;
+            return true;
           }
+          return false;
         },
         // End Method /manageModuleRequest/
 

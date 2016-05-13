@@ -48,7 +48,8 @@ define([
 
       stateMap = {
         $container   : null,
-        is_initiated : false
+        is_initiated : false,
+        module       : null
       },
 
       MainView, mainView, config, init, start, stop, requestService;
@@ -58,10 +59,14 @@ define([
 
     // -------------------- BEGIN MODULE CONSTRUCTORS -----------------------
 
-    MainView = Backbonel.View.extend({
-      initialize : function ( init_data ) {
-        console.log( '(epModHouseProjects) mainView initiated' );
+    MainView = Backbonel.View.extend( {
+      initialize: function ( init_data ) {
+        console.log( '(ep-mod-hp) mainView initiated' );
+      },
+
+      render: function () {
       }
+
     });
 
     // --------------------- END MODULE CONSTRUCTORS ------------------------
@@ -75,22 +80,38 @@ define([
     // Purpose   : Instantiate new controller
     // Arguments :
     //   * init_data - initialization map object
-    //     ** html_container - html element to contain module html
+    //     ** $container - html element to contain module html
     // Action    :
     //   * instantiate controller as new Backbone.View
     // Returns   :
     //   * true  - controller successfully initiated
     //   * false - controller was initiated previously
     // Throws    : none
+    //
     init = function ( init_data ) {
       if ( ! stateMap.is_initiated ) {
         stateMap.is_initiated = true;
-        new MainView( init_data );
+        stateMap.module = new MainView( init_data );
         return true;
       }
       return false;
     };
     // End Public method /init/
+
+    // Begin Public method /start/
+    //
+    // Example   : mainView.start()
+    // Purpose   : direct module to begin offering its capabilities to user
+    // Arguments :
+    //   * data - proposed data
+    // Action    :
+    // Returns   : none
+    // Throws    : none
+    //
+    start = function ( data ) {
+      stateMap.module.start( data );
+    };
+    // End Public method /start/
 
     // ------------------------- END PUBLIC METHODS -------------------------
 
@@ -99,10 +120,8 @@ define([
     return {
       config         : config,
       init           : init,
-      start          : start,
-      stop           : stop,
       requestService : requestService
-    }
+    };
 
   }
 );

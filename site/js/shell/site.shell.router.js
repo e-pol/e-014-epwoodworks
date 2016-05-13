@@ -103,35 +103,7 @@ define([
       // End Method /requestModApi/
 
 
-      // ------------ BEGIN MODULE DEPENDANT METHODS ------------------------
-
-      requestModLandingPage : function ( data ) {
-        this.requestMod({
-          requested_module_id : 'EP_MOD_LANDING_PAGE',
-          route_data          : data
-        });
-      },
-
-      requestModCosts : function ( data ) {
-        this.requestMod({
-          requested_module_id : 'EP_MOD_COSTS',
-          route_data          : data
-        });
-      },
-
-      requestModEngineerCalcs : function ( data ) {
-        this.requestMod({
-          requested_module_id : 'EP_MOD_ENGINEER_CALCS',
-          route_data          : data
-        });
-      },
-
-      requestModContacts : function ( data ) {
-        this.requestMod({
-          requested_module_id : 'EP_MOD_CONTACTS',
-          route_data          : data
-        });
-      },
+      // ----------- BEGIN MODULE DEPENDANT CONSTRUCTOR METHODS ------------
 
       // Begin Method /requestModProjects/
       //
@@ -168,7 +140,35 @@ define([
       },
       // End Method /requestModProjectsApi/
 
-      // ---------------- END MODULE DEPENDANT METHODS ----------------------
+      requestModLandingPage : function ( data ) {
+        this.requestMod({
+          requested_module_id : 'EP_MOD_LANDING_PAGE',
+          route_data          : data
+        });
+      },
+
+      requestModCosts : function ( data ) {
+        this.requestMod({
+          requested_module_id : 'EP_MOD_COSTS',
+          route_data          : data
+        });
+      },
+
+      requestModEngineerCalcs : function ( data ) {
+        this.requestMod({
+          requested_module_id : 'EP_MOD_ENGINEER_CALCS',
+          route_data          : data
+        });
+      },
+
+      requestModContacts : function ( data ) {
+        this.requestMod({
+          requested_module_id : 'EP_MOD_CONTACTS',
+          route_data          : data
+        });
+      },
+
+      // ----------- END MODULE DEPENDANT CONSTRUCTOR METHODS ---------------
 
 
       requestDefault : function ( data ) {
@@ -215,8 +215,10 @@ define([
     // Returns   : none
     // Throws    : none
     //
-    init = function () {
-      new SiteRouter( configMap );
+    init = function ( init_data ) {
+      if ( ! init_data ) {
+        new SiteRouter( configMap );
+      }
     };
     // End public method /initRouter/
 
@@ -243,7 +245,7 @@ define([
     return {
       config : config,
       init   : init,
-      start : start
+      start  : start
     };
   }
 );

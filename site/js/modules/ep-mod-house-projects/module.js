@@ -47,23 +47,26 @@ define([
 
     var
       configMap = {
-        mod_id : 'EP_MOD_HOUSE_PROJECTS',
-        module : {
-          $container : $('ep-mod-house-projects'),
-          do_init    : false,
-          do_start   : false,
-          main       : mainView
+        mod_id                    : 'EP_MOD_HOUSE_PROJECTS',
+        html_container_default_id : 'ep-mod-house-projects',
+        inner                     : {
+          do_init           : false,
+          do_use_mod_router : false,
+          main_ref          : mainView,
+          $container        : {
+            id    : 'ep-mod-house-projects-inner',
+            class : 'ep-mod-house-projects'
+          }
         }
       },
+
       stateMap = {
         $container   : null,
         is_initiated : false,
-        is_active    : false,
-        mod_agent    : null,
-        module       : null,
-        module_state_map : {
+        inner        : {
           is_initiated : false,
-          is_active    : false
+          main         : null,
+          $container   : null
         }
       },
       EPModHouseProjectsAgent, config, init;
@@ -81,20 +84,22 @@ define([
     EPModHouseProjectsAgent = Backbone.View.extend({
 
       initialize : function ( init_data ) {
-        var init_data = init_data || configMap;
-
         this.subscribeOnInit();
-        this.id = init_data.mod_id;
 
-        if ( configMap.module.do_init ) {
+        this.id = configMap.mod_id;
+
+        if (init_data && init_data.hasOwnProperty( '$container' )) {
+          stateMap.$container = init_data.$container;
+        }
+        else {
+          stateMap.$container = $( configMap.html_container_default_id );
+        }
+
+        if ( configMap.inner.do_init ) {
           this.initModule();
         }
 
-        if ( configMap.module.do_start ) {
-          this.startModule();
-        }
-
-        console.log('(epModHouseProjects) agent initiated');
+        console.log('(ep-mod-hp) agent initiated');
       },
 
       subscribeOnInit : function () {
@@ -136,51 +141,95 @@ define([
       },
 
       configModule : function ( config_map ) {
-
       },
 
       initModule : function ( init_data ) {
-
+        if ( ! stateMap.inner.is_initiated ) {
+          stateMap.inner.is_initiated = true;
+          this.setInnerContainer();
+          configMap.inner.main_ref.init( {
+            $container : stateMap.inner.$container
+          } );
+        }
       },
 
+      // Begin Method /startModule/
+      //
+      // Example   : module.start( {...} )
+      // Purpose   :
+      // Arguments :
+      //   * data -
+      // Action    :
+      //   * if module not initiated init it
+      //   * show module html
+      // Return    : none
+      // Throw     : none
+      //
       startModule : function ( data ) {
-        console.info( 'startModule' );
+
+        console.log( '(ep-mod-hp) startModule' );
+
+        if ( ! stateMap.inner.is_initiated ) {
+          this.initModule();
+        }
+        stateMap.inner.$container.show();
       },
+      // End Method /startModule/
 
       stopModule : function ( data ) {
-        console.log( 'stopModule' );
+
+        console.log( '(ep-mod-hp) stopModule' );
+
+        stateMap.inner.$container.hide();
       },
 
       updateModule : function ( data ) {
-        console.log( 'updateModule' );
+
+        console.log( '(ep-mod-hp) updateModule' );
+
       },
 
       requestService : function ( data ) {
 
       },
 
+      // Begin Constructor method /setInnerContainer/
+      //
+      // Example   : module.setInnerContainer()
+      // Purpose   : creates module inner html container
+      // Arguments : none
+      // Action    :
+      //   * check if inner container was not created previously
+      //   * get elem id and class from configMap
+      //   * create new <div> elem with jQuery with proposed id and class
+      //   * update stateMap (set reference to elem)
+      //   * append elem to module outer container
+      //   * return elem
+      // Return    :
+      //  * jQuery object with created element
+      //  * false - if elem was created before
+      // Throws    : none
+      //
+      setInnerContainer : function () {
+        if ( ! stateMap.inner.$container ) {
+          var $el, $el_id, $el_class;
 
-        onModuleGenericRequest : function ( data ) {
+          $el_id = configMap.inner.$container.id;
+          $el_class = configMap.inner.$container.class;
 
-        function debug_info(msg) {
-          console.group('onModuleGenericRequest');
-          console.info('message             : ', msg);
-          console.info('pub/sub data        : ', data);
-          console.log( 'requested_module_id : ', data.pub_data.requested_module_id);
-          console.log( 'pud_data            : ', data.pub_data);
-          console.log( 'stateMap            : ', stateMap);
-          console.groupEnd();
+          $el = $('<div>', {
+            id    : $el_id,
+            class : $el_class
+          } ).text('DEBUG MESSAGE: (Module) EP_MOD_HOUSE_PROJECTS');
+
+          stateMap.inner.$container = $el;
+          $(stateMap.$container).append( $el );
+
+          return $el;
         }
-
-        if ( data.pub_data.requested_module_id === this.id ) {
-
-          debug_info('moduleGenericRequest captured');
-
-          this.startModController( data.pub_data );
-
-        }
+        return false;
       }
-
+      // End Constructor method /setInnerContainer/
     });
     // End Constructor /EPModHouseProjectsAgent/
 
@@ -221,7 +270,7 @@ define([
     //
     init = function ( init_data ) {
       if ( ! stateMap.is_initiated ) {
-        stateMap.mod_agent = new EPModHouseProjectsAgent();
+        new EPModHouseProjectsAgent( init_data );
         return true;
       }
       return false;
