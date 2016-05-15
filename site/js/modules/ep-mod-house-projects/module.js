@@ -30,17 +30,18 @@
 
 require.config({
   paths   : {
-    epModHouseProjects : 'modules/ep-mod-house-projects/'
+    epModHP : 'modules/ep-mod-house-projects'
   }
 });
 
 define([
   'jquery',
   'underscore',
-  'backbone',
+  'backbone', 
+  'bootstrap',
   'channel',
-  'epModHouseProjects/views/main.view'
-  ], function( $, _, Backbone, globalChannel, mainView ) {
+  'epModHP/views/main.view'
+  ], function( $, _, Backbone, bootstrap, globalChannel, mainView ) {
   "use strict";
 
     // ----------------- BEGIN MODULE SCOPE VARIABLES -----------------------
@@ -49,6 +50,7 @@ define([
       configMap = {
         mod_id                    : 'EP_MOD_HOUSE_PROJECTS',
         html_container_default_id : 'ep-mod-house-projects',
+        style_path                : 'js/modules/ep-mod-house-projects/css/module.css',
         inner                     : {
           do_init           : false,
           do_use_mod_router : false,
@@ -140,12 +142,22 @@ define([
 
       },
 
+      addStyleOnInit : function() {
+        console.log('here');
+        $( '<link>', {
+          rel  : 'stylesheet',
+          type : 'text/css',
+          href : configMap.style_path
+        } ).appendTo('head');
+      },
+
       configModule : function ( config_map ) {
       },
 
       initModule : function ( init_data ) {
         if ( ! stateMap.inner.is_initiated ) {
           stateMap.inner.is_initiated = true;
+          this.addStyleOnInit();
           this.setInnerContainer();
           configMap.inner.main_ref.init( {
             $container : stateMap.inner.$container

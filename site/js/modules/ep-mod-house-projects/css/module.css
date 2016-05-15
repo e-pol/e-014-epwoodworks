@@ -1,0 +1,18 @@
+.ep-mod-house-projects-filters {
+  margin: 0 auto 1em auto;
+  border-radius: 1em;
+  background-color: #06888A;
+  padding: 1em; }
+  .ep-mod-house-projects-filters fieldset {
+    margin-bottom: 1em; }
+  .ep-mod-house-projects-filters input {
+    cursor: pointer; }
+  .ep-mod-house-projects-filters #ep-mod-house-projects-filter-tech label {
+    cursor: pointer;
+    display: block; }
+  .ep-mod-house-projects-filters #ep-mod-house-projects-filters-submit, .ep-mod-house-projects-filters #ep-mod-house-projects-filters-reset {
+    display: block;
+    margin: 0.5em auto;
+    width: 80%; }
+
+/*# sourceMappingURL=module.css.map */
