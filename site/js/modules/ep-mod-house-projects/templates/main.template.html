@@ -33,6 +33,12 @@
           Каркас
         </label>
       </fieldset>
+      <fieldset id="ep-mod-house-projects-filter-status" class="ep-mod-house-projects-filter">
+        <legend>Стадия</legend>
+        <label><input type="checkbox">Реализован </label>
+        <label><input type="checkbox">В процессе </label>
+        <label><input type="checkbox">Проект </label>
+      </fieldset>
       <input id="ep-mod-house-projects-filters-submit" type="submit" value="Показать">
       <input id="ep-mod-house-projects-filters-reset" type="reset" value="Сбросить">
     </form>
@@ -44,7 +50,116 @@
   <!--                                      -->
   <!-- Begin Project collection placeholder -->
   <!--                                      -->
-  <div id="ep-mod-house-projects-collection" class="col-md-9">
+  <div id="ep-mod-house-projects-collection" class="ep-mod-house-projects-collection col-md-9">
+
+    <!--            -->
+    <!-- Begin sort -->
+    <!--            -->
+    <div id="ep-mod-house-projects-collection-sort" class="ep-mod-house-projects-collection-sort">
+      <ul>
+        <span>Сортировать</span>
+        <li class="ep-mod-house-projects-collection-sort-active">
+          <a href="#by-area" class="ep-mod-house-projects-collection-sort-asc">Площадь</a>
+        </li>
+        <li>
+          <a href="#by-name" class="ep-mod-house-projects-collection-sort-asc">Наименование</a>
+        </li>
+      </ul>
+    </div>
+    <!--          -->
+    <!-- End sort -->
+    <!--          -->
+
+    <!--                              -->
+    <!-- Begin House projects Gallery -->
+    <!--                              -->
+    <div id="ep-mod-house-projects-collection-gallery row">
+
+      <!-- Begin project -->
+      <div id="ep-mod-house-projects-collection-gallery-project-15001" class="ep-mod-house-projects-collection-gallery-project col-md-4">
+        <a href="#15001">
+          <img class="img-responsive" src="js\modules\ep-mod-house-projects\data\projects\project-15001\img\project_pb-16_001.jpg">
+          <h3>Проект 15.001</h3>
+          <ul>
+            <li>120 м2</li>
+            <li>Профилированный брус</li>
+            <li>Построен 2016-июнь</li>
+          </ul>
+        </a>
+      </div>
+      <!-- End Project -->
+
+      <!-- Begin Project -->
+      <div id="ep-mod-house-projects-collection-gallery-project-15002" class="ep-mod-house-projects-collection-gallery-project col-md-4">
+        <a href="#15002">
+          <img class="img-responsive" src="js\modules\ep-mod-house-projects\data\projects\project-15001\img\project_pb-16_001.jpg">
+          <h3>Проект 15.002</h3>
+          <ul>
+            <li>180 м2</li>
+            <li>Лафет</li>
+            <li>Построен 2016-август</li>
+          </ul>
+        </a>
+      </div>
+      <!-- End Project -->
+
+      <!-- Begin project -->
+      <div id="ep-mod-house-projects-collection-gallery-project-15003" class="ep-mod-house-projects-collection-gallery-project col-md-4">
+        <a href="#16001">
+          <img class="img-responsive" src="js\modules\ep-mod-house-projects\data\projects\project-15001\img\project_pb-16_001.jpg">
+          <h3>Проект 15.003</h3>
+          <ul>
+            <li>40 м2</li>
+            <li>Профилированный брус</li>
+            <li>В процессе реализации</li>
+          </ul>
+        </a>
+      </div>
+      <!-- End project -->
+
+    </div>
+    <!--                            -->
+    <!-- End House projects Gallery -->
+    <!--                            -->
+
+    <!--                  -->
+    <!-- Begin Pagination -->
+    <!--                  -->
+    <div id="ep-mod-house-projects-collection-pagination" class="ep-mod-house-projects-collection-pagination row">
+
+      <!-- Begin Pagination navigation -->
+      <ul class="ep-mod-house-projects-collection-pagination-page col-md-12">
+        <li class="ep-mod-house-projects-collection-pagination-page-active">
+          <a href="#1">1</a>
+        </li>
+        <li>
+          <a href="#2">2</a>
+        </li>
+        <li>
+          <a href="#3">3</a>
+        </li>
+      </ul>
+      <!-- End Pagination navigation -->
+
+      <!-- Begin Number of projects per page select -->
+      <ul class="ep-mod-house-projects-collection-pagination-size col-md-12">
+        <span>Показывать</span>
+        <li class="ep-mod-house-projects-collection-pagination-size-active">
+          <a href="#pages-12">12</a>
+        </li>
+        <li>
+          <a href="#pages-24">24</a>
+        </li>
+        <li>
+          <a href="#pages-all">Все</a>
+        </li>
+      </ul>
+      <!-- End Number of projects per page select -->
+
+    </div>
+    <!--                -->
+    <!-- End Pagination -->
+    <!--                -->
 
   </div>
   <!--                                      -->

@@ -5,7 +5,7 @@
  * Version: 0.4.0 (2014/04/10)
  * Released under the MIT license
  */
-define(['../../../../../../../W-02_Web_DD/vendors/libs.js/requireJS/text'], function(text){
+define(['text'], function(text){
 
     var CACHE_BUST_QUERY_PARAM = 'bust',
         CACHE_BUST_FLAG = '!bust',

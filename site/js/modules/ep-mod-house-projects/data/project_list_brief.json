@@ -1,0 +1,36 @@
+{
+  "name": "ep-mod-house-projects",
+  "version": "0.0.1",
+  "projects_list" : {
+    "15001" : {
+      "id"       : "15001",
+      "path"     : "data/projects/project-15001",
+      "code"     : "ПБ-15.001",
+      "type"     : "house",
+      "tech"     : "profiled-beam",
+      "area"     : 120,
+      "floors"   : 1,
+      "realized" : "2015.06"
+    },
+    "15002" : {
+      "id"       : "15002",
+      "path"     : "data/projects/project-15002",
+      "code"     : "ПБ-15.002",
+      "type"     : "house",
+      "tech"     : "laften",
+      "area"     : 180,
+      "floors"   : 2,
+      "realized" : "2015.08"
+    },
+    "16001" : {
+      "id"       : "16001",
+      "path"     : "data/projects/project-16001",
+      "code"     : "ПБ-16.001",
+      "type"     : "bath-house",
+      "tech"     : "profiled-beam",
+      "area"     : 40,
+      "floors"   : 1,
+      "realized" : "in-progress"
+    }
+  }
+}

@@ -29,8 +29,15 @@
 //
 
 require.config({
+  baseUrl : "js",
   paths   : {
-    epModHP : 'modules/ep-mod-house-projects'
+    jquery     : 'libs/jquery/jquery-1.12.3.min',
+    bootstrap  : 'libs/bootstrap/bootstrap.min',
+    underscore : 'libs/underscore/underscore-min',
+    backbone   : 'libs/backbone/backbone-min',
+    text       : 'libs/require/text',
+    json       : 'libs/require/json',
+    epModHP    : 'modules/ep-mod-house-projects'
   }
 });
 

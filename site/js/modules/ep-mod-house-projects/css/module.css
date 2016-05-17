@@ -1,3 +1,5 @@
+/* filters */
+/* collection */
 .ep-mod-house-projects-filters {
   margin: 0 auto 1em auto;
   border-radius: 1em;
@@ -14,5 +16,42 @@
     display: block;
     margin: 0.5em auto;
     width: 80%; }
+
+.ep-mod-house-projects-collection .ep-mod-house-projects-collection-sort ul {
+  padding: 0 0 0 1em; }
+  .ep-mod-house-projects-collection .ep-mod-house-projects-collection-sort ul span {
+    padding: 0 1em 0 0; }
+  .ep-mod-house-projects-collection .ep-mod-house-projects-collection-sort ul li {
+    display: inline-block;
+    list-style-type: none;
+    padding: 0 1em 0 1em; }
+.ep-mod-house-projects-collection .ep-mod-house-projects-collection-gallery:after {
+  content: " ";
+  display: table;
+  clear: both; }
+.ep-mod-house-projects-collection .ep-mod-house-projects-collection-gallery-project {
+  border: 2px solid transparent;
+  border-radius: 1em; }
+  .ep-mod-house-projects-collection .ep-mod-house-projects-collection-gallery-project:hover {
+    cursor: pointer;
+    border: 2px solid #31b0d5; }
+  .ep-mod-house-projects-collection .ep-mod-house-projects-collection-gallery-project h3 {
+    text-align: center; }
+  .ep-mod-house-projects-collection .ep-mod-house-projects-collection-gallery-project ul {
+    text-align: center;
+    padding: 0; }
+    .ep-mod-house-projects-collection .ep-mod-house-projects-collection-gallery-project ul li {
+      list-style-type: none; }
+.ep-mod-house-projects-collection .ep-mod-house-projects-collection-pagination {
+  display: none; }
+  .ep-mod-house-projects-collection .ep-mod-house-projects-collection-pagination ul {
+    text-align: center;
+    padding: 0 0 0 1em; }
+    .ep-mod-house-projects-collection .ep-mod-house-projects-collection-pagination ul span {
+      padding: 0 1em 0 0; }
+    .ep-mod-house-projects-collection .ep-mod-house-projects-collection-pagination ul li {
+      display: inline-block;
+      list-style-type: none;
+      padding: 0 1em 0 1em; }
 
 /*# sourceMappingURL=module.css.map */

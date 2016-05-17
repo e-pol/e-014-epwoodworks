@@ -35,8 +35,9 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'epModHP/models/main.model',
   'text!epModHP/templates/main.template.html'
-  ], function( $, _, Backbonel, mainTemplate ) {
+  ], function( $, _, Backbonel, model, mainTemplate ) {
   "use strict";
 
 
@@ -63,6 +64,7 @@ define([
     MainView = Backbonel.View.extend( {
       initialize: function ( init_data ) {
         console.log( '(ep-mod-hp) mainView initiated' );
+        model.init();
         stateMap.$container = init_data.$container;
         this.render();
         stateMap.$container.append( this.$el );

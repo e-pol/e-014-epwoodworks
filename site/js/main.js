@@ -39,6 +39,9 @@ require.config({
     'bootstrap'  : {
       deps    : ['jquery'],
       exports : 'bootstrap'
+    },
+    'json'       : {
+      deps : ['text']
     }
   }
 });
