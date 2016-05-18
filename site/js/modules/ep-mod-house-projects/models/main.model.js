@@ -1,7 +1,7 @@
 /**
  * Created by 123 on 12.05.2016.
- * Main module controller
- * main.view.js
+ * Main module model
+ * main.model.js
  */
 
 /*jslint
@@ -18,29 +18,27 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'epModHP/collections/project_brief_list.collection',
-  'epModHP/collections/filter_list.collection',
-  'json!epModHP/data/project_list_brief.json'
+  'epModHP/collections/projects.collection',
+  'epModHP/collections/filters.collection',
+  'json!epModHP/data/model.data.json'
   ], function ( $, _, Backbone,
-                ProjectsBriefListCollection,
-                FilterListCollection,
-                projectsListBriefJSON ) {
+                ProjectsCollection,
+                FiltersCollection,
+                modelData ) {
   "use strict";
 
 
   // ----------------- BEGIN MODULE SCOPE VARIABLES -----------------------
 
   var
-    configMap = {
-    },
+    configMap = { id : 'EP_MOD_HOUSE_PROJECTS_MAIN_MODEL' },
     stateMap = {
-      model                   : null,
-      projects_collection     : null,
-      filters_collection      : null,
-      is_initiated            : false,
-      project_list_brief_json : projectsListBriefJSON
+      is_initiated        : false,
+      model               : null,
+      projects_collection : null,
+      filters_collection  : null
     },
-    Model, init;
+    Model, init, getProjectsCollection;
 
   // ------------------- END MODULE SCOPE VARIABLES -----------------------
 
@@ -48,17 +46,30 @@ define([
   // --------------------- BEGIN MODULE CONSTRUCTORS ----------------------
 
   Model = Backbone.Model.extend({
-    initialize : function () {
+    //
+    // Begin Constructor method /initialize/
+    //
+    // Purpose   : invoked on initialization
+    // Arguments :
+    //   * init_data - configuration data
+    // Action    :
+    //   * set model id
+    //   * create project models collection
+    //   * create filter models collection
+    // Return    : none
+    // Throws    : none
+    //
+    initialize : function ( init_data ) {
+      this.id = configMap.id;
 
-      this.setProjectsCollection(
-        stateMap.project_list_brief_json.projects_list_brief_json
-      );
+      console.log( '(ep-mod-hp) ' + this.id + ' initiated' );
 
-      this.setFiltersCollection();
+      this.setProjectsCollection( init_data.project_list );
     },
 
     // Begin Constructor method /setProjectsCollection/
     //
+    // Example   : this.setProjectsCollection( {...} )
     // Purpose   : create collection of project brief models
     // Arguments : project list map in JSON format
     // Action    :
@@ -69,13 +80,14 @@ define([
     setProjectsCollection : function ( project_list_brief ) {
       if ( ! stateMap.projects_collection ) {
         stateMap.projects_collection =
-          new ProjectsBriefListCollection( project_list_brief );
+          new ProjectsCollection( null, project_list_brief );
       }
     },
     // End Constructor method /setProjectsCollection/
 
     // Begin Constructor method /setFiltersCollection/
     //
+    // Example   : this.setFiltersCollection( {...} )
     // Purpose   : create collection of filter models
     // Arguments : filter list map in JSON format
     // Action    :
@@ -85,7 +97,7 @@ define([
     //
     setFiltersCollection : function ( filter_list ) {
       if ( ! stateMap.filters_collection ) {
-        stateMap.filters_collection = new FilterListCollection( filter_list );
+        stateMap.filters_collection = new FiltersCollection( null, filter_list );
       }
     }
     // End Constructor method /setFiltersCollection/
@@ -110,21 +122,42 @@ define([
   //   * false - model was initiated previously
   // Throws    : none
   //
-  init = function ( init_data ) {
+  init = function () {
     if ( ! stateMap.is_initiated ) {
       stateMap.is_initiated = true;
-      stateMap.model = new Model( init_data );
+      stateMap.model = new Model( modelData );
       return true;
     }
     return false;
   };
   // End Public method /init/
 
+  // Begin Public method /getProjectsCollection/
+  //
+  // Example   : model.getProjectsCollection()
+  // Purpose   : get projects collection
+  // Arguments : none
+  // Action    :
+  //   *
+  // Returns   :
+  //   * projects collection
+  //   * false - if projects collection doesn`t exist
+  // Throws    : none
+  //
+  getProjectsCollection = function () {
+    if ( stateMap.projects_collection ) {
+      return stateMap.projects_collection;
+    }
+    return false;
+  };
+  // End Public method /getProjectsCollection/
+
   // ------------------------- END PUBLIC METHODS -------------------------
   
 
   return {
-    init     : init
+    init                  : init,
+    getProjectsCollection : getProjectsCollection
   };
 
 });

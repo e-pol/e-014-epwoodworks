@@ -150,7 +150,6 @@ define([
       },
 
       addStyleOnInit : function() {
-        console.log('here');
         $( '<link>', {
           rel  : 'stylesheet',
           type : 'text/css',

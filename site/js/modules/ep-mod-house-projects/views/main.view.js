@@ -36,25 +36,28 @@ define([
   'underscore',
   'backbone',
   'epModHP/models/main.model',
+  'epModHP/views/filters.view',
+  'epModHP/views/projects.view',
   'text!epModHP/templates/main.template.html'
-  ], function( $, _, Backbonel, model, mainTemplate ) {
-  "use strict";
+
+  ], function( $, _, Backbonel,
+               model, FiltersView, ProjectsView,
+               mainTemplate ) {
+
+    "use strict";
 
 
     // ----------------- BEGIN MODULE SCOPE VARIABLES -----------------------
 
     var
-      configMap = {
-        "id" : "EP_MOD_HOUSE_PROJECTS_MAIN_VIEW"
-      },
+      configMap = {},
 
       stateMap = {
-        $container   : null,
         is_initiated : false,
         module       : null
       },
 
-      MainView, mainView, config, init, start, stop, requestService;
+      MainView, config, init, start, stop, requestService;
 
     // --------------------- END MODULE SCOPE VARIABLES ---------------------
 
@@ -62,18 +65,70 @@ define([
     // -------------------- BEGIN MODULE CONSTRUCTORS -----------------------
 
     MainView = Backbonel.View.extend( {
-      initialize: function ( init_data ) {
-        console.log( '(ep-mod-hp) mainView initiated' );
+      class_id : 'EP_MOD_HOUSE_PROJECTS_MAIN_VIEW',
+
+      $containers : {
+        projects : {
+          selector : '#ep-mod-house-projects-collection-container'
+        },
+        filters  : {
+          selector : '#ep-mod-house-projects-filters-container'
+        }
+      },
+
+      events : {
+        'click #ep-mod-house-projects-collection-sort' : 'onClickSort'
+      },
+
+      // Begin Constructor method /initialize/
+      //
+      // Purpose   : invoked on initialization
+      // Arguments :
+      //   * init_data - configuration data
+      // Action    :
+      //   *
+      // Return    : none
+      // Throws    : none
+      //
+      initialize : function ( init_data ) {
+        // store this module outer container reference
+        this.$container = init_data.$container;
+
+        console.log( '(ep-mod-hp) ' + this.class_id + ' initiated' );
+
+        // initiate model
         model.init();
-        stateMap.$container = init_data.$container;
+
+        // initiate filters
+        /*stateMap.filters.$container
+          = $( configMap.filters.$container_selector );
+        filters.init({ $container : stateMap.filters.$container });*/
+
+        // populate template with module data
         this.render();
-        stateMap.$container.append( this.$el );
+
+        // initiate projects
+        this.projectsView = new ProjectsView({
+          collection : model.getProjectsCollection()
+        });
+
+        // add projects elem to its container (in this view elem)
+        this.$( this.$containers.projects.selector )
+          .html( this.projectsView.render().$el );
+
+        // add html to inner container
+        this.$container.append( this.$el );
       },
 
       template : _.template( mainTemplate ),
 
-      render: function () {
+      render : function () {
         this.$el.html( this.template );
+      },
+
+      onClickSort : function ( event ) {
+        event.preventDefault();
+        console.log( 'sort-request' );
       }
 
     });
