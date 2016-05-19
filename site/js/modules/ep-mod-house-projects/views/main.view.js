@@ -76,10 +76,6 @@ define([
         }
       },
 
-      events : {
-        'click #ep-mod-house-projects-collection-sort' : 'onClickSort'
-      },
-
       // Begin Constructor method /initialize/
       //
       // Purpose   : invoked on initialization
@@ -124,11 +120,6 @@ define([
 
       render : function () {
         this.$el.html( this.template );
-      },
-
-      onClickSort : function ( event ) {
-        event.preventDefault();
-        console.log( 'sort-request' );
       }
 
     });

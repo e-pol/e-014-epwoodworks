@@ -30,6 +30,10 @@ define([
       id : 'EP_MOD_HOUSE_PROJECTS_PROJECTS_COLLECTION'
     },
 
+    stateMap = {
+      revised_collection : null
+    },
+
     ProjectBriefCollection;
 
   // ------------------- END MODULE SCOPE VARIABLES -----------------------
@@ -96,8 +100,49 @@ define([
     addProjectBriefModel : function ( project_data ) {
       var model = new ProjectBriefModel( project_data );
       this.add( model );
-    }
+    },
     // End Constructor method /addProjectBriefModel/
+
+    // Begin Constructor method /changeOrderByKey/
+    //
+    // Example   : this.changeOrderByKey( 'key', 'asc' )
+    // Purpose   : sort collection by key in asc/desc order
+    // Arguments :
+    //   * key   - model key
+    //   * order - could be 'asc' or 'desc'
+    // Action    :
+    //   * set collection comparator
+    //     ** get model_a and model_b key values
+    //     ** set boolean is_asc true/false depending on requested order
+    //     ** return -1 / 0 / 1 depending on key values and order
+    //   * sort collection with revised comparator
+    // Return    : none
+    // Throws    : none
+    //
+    changeOrderByKey : function ( key, order ) {
+
+      this.comparator = function ( model_a, model_b ) {
+        var val_a, val_b, is_asc;
+        val_a = model_a.get( key );
+        val_b = model_b.get( key );
+
+        is_asc = ( order === 'asc' );
+
+        if ( val_a > val_b ) {
+          return  is_asc ? 1 : -1 ;
+        }
+        else if ( val_a < val_b ) {
+          return is_asc ? -1 : 1 ;
+        }
+        else {
+          return 0;
+        }
+      };
+
+      this.sort();
+    }
+    // End Constructor method /changeOrderByKey/
+    
   });
 
   // -------------------- END COLLECTION CONSTRUCTOR ----------------------
