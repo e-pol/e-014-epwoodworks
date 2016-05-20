@@ -71,12 +71,16 @@ define([
       this.$el.html( this.template );
       this.$projects = this.$('#ep-mod-house-projects-collection-gallery');
 
-      //
-      //     ----->>>>> TODO <<<<<-----
-      //
-      // Need to get asc / desc class from collection on init,
-      // then set it to template. Else template overrides classes
-      //
+
+      //////////////////////////////////////////////////////////////
+      //                                                          //
+      //              ----->>>>> TODO <<<<<-----                  //
+      //                                                          //
+      // Need to get asc / desc class from collection on init,    //
+      // then set it to template. Else template overrides classes //
+      //                                                          //
+      //////////////////////////////////////////////////////////////
+
 
       this.renderProjects();
 
@@ -113,16 +117,31 @@ define([
     // Throw     : none
     //
     onClickSort : function ( event ) {
-      var $parent;
+      var elem, hash, $parent, key, order;
       event.preventDefault();
-      $parent = $(event.target ).parent();
+      elem    = event.target;
+      hash    = elem.hash;
+      $parent = $( elem ).parent();
 
       if ( $parent.hasClass( configMap.ui.sort.class.active ) ) {
-        this.toggleSort( event );
+        order = this.toggleSort( event );
       }
       else {
-        this.newSort( event );
+        order = this.newSort( event );
       }
+
+      switch ( hash ) {
+        case '#by-area':
+          key = 'area';
+          break;
+        case '#by-name':
+          key = 'code';
+          break;
+      }
+
+      this.collection.changeOrderByKey( key, order );
+
+      this.renderProjects();
     },
     // End Constructor method /onClickSort/
 
@@ -135,15 +154,15 @@ define([
     // Action    :
     //   * get target elem and make the jQuery object
     //   * toggle DOM classes representing ascending and descending order
-    //   * request collection sort
-    // Return    : none
+    //   * return order value
+    // Return    :
+    //   * order - value 'asc' or 'desc'
     // Throws    : none
     //
     toggleSort : function ( event ) {
       console.log('toggle-sort');
-      var elem, hash, $elem, order, key;
+      var elem, $elem, order;
       elem    = event.target;
-      hash    = elem.hash;
       $elem   = $( elem );
 
       $elem.toggleClass( function () {
@@ -159,18 +178,7 @@ define([
         }
       } );
 
-      switch ( hash ) {
-        case '#by-area':
-          key = 'area';
-          break;
-        case '#by-name':
-          key = 'code';
-          break;
-      }
-
-      this.collection.changeOrderByKey( key, order );
-
-      this.renderProjects();
+      return order;
     },
     // End Constructor method /toggleSort/
 
@@ -183,14 +191,15 @@ define([
     // Action    :
     //   * remove proper class from previously active elem
     //   * add proper class to event target elem
-    // Return    : none
+    //   * return order value
+    // Return    :
+    //   * order value - 'asc' or 'desc'
     // Throws    : none
     //
     newSort : function ( event ) {
       console.log( 'new-sort' );
-      var elem, hash, $elem, $parent, $list, $active;
+      var elem, $elem, $parent, $list, $active;
       elem    = event.target;
-      hash    = elem.hash;
       $elem   = $( elem );
       $parent = $elem.parent();
       $list   = $elem.parents( '.' + configMap.ui.sort.class.container );
@@ -198,6 +207,11 @@ define([
 
       $active.removeClass( configMap.ui.sort.class.active );
       $parent.addClass( configMap.ui.sort.class.active );
+
+      if ( $elem.hasClass( configMap.ui.sort.class.asc ) ) {
+        return 'asc';
+      }
+      return 'desc';
     }
     // End Constructor method /newSort/
 

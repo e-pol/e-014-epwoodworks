@@ -27,11 +27,22 @@ define([
 
   var
     configMap = {
-      id : 'EP_MOD_HOUSE_PROJECTS_PROJECTS_COLLECTION'
+      id : 'EP_MOD_HOUSE_PROJECTS_PROJECTS_COLLECTION',
+      allowed_filter_type_list : [
+        'simple', 'min_max'
+      ],
+      allowed_filter_key_list  : [
+        'area' , 'type' , 'floors' , 'tech'
+      ]
     },
 
     stateMap = {
-      revised_collection : null
+      cache : {
+        original_collection    : null,
+        filtered_collection    : null,
+        filter_temp_collection : null
+      },
+      filter_list : null
     },
 
     ProjectBriefCollection;
@@ -60,6 +71,34 @@ define([
       console.log( '(ep-mod-hp) ' + this.id + ' initiated' );
 
       this.addProjectModels( init_data );
+
+      if ( true ) {
+        this.changeOrderByKey( 'code', 'desc' );
+      }
+
+      stateMap.cache.original_collection
+        = new Backbone.Collection( this.models );
+
+      stateMap.cache.filtered_collection
+        = new Backbone.Collection();
+
+      stateMap.cache.filter_temp_collection
+        = new Backbone.Collection();
+
+      this.setFilters({
+        simple : {
+          floors : {
+            key    : 'floors',
+            values : [1, 2]
+          },
+          tech : {
+            key    : 'tech',
+            values : [ 'laften' ]
+          }
+        }
+      });
+
+      this.applyFilters();
     },
     // End Constructor method /initialize/
 
@@ -140,8 +179,210 @@ define([
       };
 
       this.sort();
-    }
+    },
     // End Constructor method /changeOrderByKey/
+
+    // Begin Constructor method /setFilters/
+    //
+    // Example   : this.setFilters( { ...filters map.. })
+    // Purpose   : set collection filters
+    // Arguments :
+    //   * filters_map
+    // Action    :
+    //   * validate filter type names
+    //   * iterate filters list by type
+    //   * switch to given filter type
+    //     ** get values from filter map
+    //     ** invoke filter type relevant method
+    // Return    : none
+    // Throw     : Error on invalid filter type
+    //
+    setFilters : function ( filters_map ) {
+      var filter_type, filter;
+
+      for ( filter_type in filters_map ) {
+        if ( filters_map.hasOwnProperty( filter_type ) ) {
+          if ( configMap.allowed_filter_type_list.indexOf( filter_type ) < 0 ) {
+            throw new Error( 'Unallowed filter type. Check configMap' );
+          }
+          switch ( filter_type ) {
+            case 'simple':
+              for (filter in filters_map[ filter_type ] ) {
+                var filter_map, filter_name, key_name, values;
+                filter_map  = filters_map[ filter_type ][ filter ];
+                filter_name = filter;
+                key_name    = filter_map.key;
+                values      = filter_map.values;
+                this.setSimpleFilter( filter_name, key_name, values );
+              }
+              break;
+          }
+        }
+      }
+
+    },
+    // End Constructor method /setFilters/
+
+    // Begin Constructor method /setSimpleFilter/
+    //
+    // Example   : this.setSimpleFilter( 'filter_name', 'key', '1' )
+    // Purpose   : add simple filter data to stateMap
+    // Arguments :
+    //   * filter_name - filer name in stateMap
+    //   * key         - name of a key of the model
+    //   * value       - key value or values
+    // Action     :
+    //   * if filter_list is empty (null), create it (empty object)
+    //   * if simple filters list is empty, create it
+    //   * cache simple filters list
+    //   * if filter is not in list yet, create it
+    //   * if filter is in list
+    //     ** and given value type is not array update it
+    //     ** and given value type is array iterate it and update filter
+    // Return     :
+    //   * false - if no action was committed
+    //   * true  - if filter was created or updated
+    // Throws     : Error on invalid key name
+    //
+    setSimpleFilter : function ( filter_name, key, value ) {
+      var filter, values, simple_filters, rev_value;
+
+      if ( configMap.allowed_filter_key_list.indexOf( key ) < 0 ) {
+        throw new Error('Unallowed filter key name. Check configMap. ');
+      }
+
+      if ( ! stateMap.filter_list ) {
+        stateMap.filter_list = {};
+      }
+
+      if ( ! stateMap.filter_list.simple ) {
+        stateMap.filter_list.simple = {};
+      }
+
+      simple_filters = stateMap.filter_list.simple;
+
+      if ( ! simple_filters[ filter_name ] ) {
+        rev_value = Array.isArray( value ) ? value : [ value ];
+        simple_filters[ filter_name ] = {
+          key    : key,
+          values : rev_value
+        };
+        return true;
+      }
+
+      if ( simple_filters[ filter_name ].key === key ){
+        if ( ! Array.isArray( value )
+          && simple_filters[ filter_name ].values.indexOf( value ) < 0 ){
+          simple_filters[ filter_name ].values.push( value );
+        }
+        else if ( Array.isArray( value ) ) {
+          value.forEach( function ( val ) {
+            if ( simple_filters[ filter_name ].values.indexOf( val ) < 0 ) {
+              simple_filters[ filter_name ].values.push( val );
+            }
+          } );
+        }
+        return true;
+      }
+
+      return false;
+
+    },
+    // End Constructor method /setSimpleFilter/
+
+    // Begin Constructor method /applyFilters/
+    //
+    // Example   : this.applyFilters()
+    // Purpose   : filter collection
+    // Arguments : none
+    // Action    :
+    //   *
+    // Return    :
+    //   *
+    // Throw     :
+    //
+    applyFilters : function() {
+      var
+        filter_list, filter, self;
+
+      self                = this;
+      filter_list         = stateMap.filter_list;
+
+      // Reset filtered collection to contain all the models
+      stateMap.cache.filtered_collection.
+        reset( stateMap.cache.original_collection.models );
+
+      if ( ! filter_list ) { return; }
+
+      if ( filter_list[ 'simple' ] ) {
+        for ( filter in filter_list[ 'simple' ]) {
+          if ( filter_list[ 'simple' ].hasOwnProperty( filter ) ) {
+            this.applySimpleFilter( filter_list[ 'simple' ][ filter ] );
+          }
+        }
+      }
+
+      this.reset( stateMap.cache.filtered_collection.models );
+    },
+    // End Constructor method /applyFilters/
+
+    // Begin Constructor method /applySimpleFilter/
+    //
+    // Example   : this.applySimpleFilter( {...} )
+    // Purpose   :
+    // Arguments :
+    //   * filter - filter data (obj)
+    //     ** key    - model key name
+    //     ** values - list (array) of allowed key values
+    // Action    :
+    //   * get key and values from filter data obj
+    //   * iterate values list
+    //   *
+    // Return    :
+    // Throw     :
+    //
+    applySimpleFilter: function ( filter ) {
+      var key, values, model_list;
+      key    = filter.key;
+      values = filter.values;
+
+      stateMap.cache.filter_temp_collection.reset( null );
+
+      values.forEach( function( value ) {
+        var attr = {};
+        attr[ key ] = value;
+
+        stateMap.cache.filter_temp_collection
+          .add( stateMap.cache.filtered_collection.where( attr ) );
+
+        }, this );
+
+      stateMap.cache.filtered_collection
+        .reset( stateMap.cache.filter_temp_collection.models );
+
+    },
+    // End Constructor method /applySimpleFilter/
+
+    // Begin Constructor method /resetFilters/
+    //
+    // Example   : this.resetFilters()
+    // Purpose   : reset filters states and all collections
+    // Arguments : none
+    // Action    :
+    //   * reset filters stateMap
+    //   * reset collection with filtered models
+    //   * reset temporary filter collection
+    //   * reset this collection to original state (all models are in)
+    // Return    : none
+    // Throw     : none
+    //
+    resetFilters : function() {
+      stateMap.filter_list = null;
+      stateMap.cache.filtered_collection.reset();
+      stateMap.cache.filter_temp_collection.reset();
+      this.reset( stateMap.cache.original_collection.models );
+    }
+    // End Constructor method /resetFilters/
     
   });
 

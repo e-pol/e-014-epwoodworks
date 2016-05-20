@@ -2,6 +2,17 @@
   "name": "ep-mod-house-projects",
   "version": "0.0.1",
   "project_list" : {
+    "14009" : {
+      "id"        : "14009",
+      "path"      : "data/projects/project-15001",
+      "code"      : "ПБ-14.009",
+      "type"      : "house",
+      "tech"      : "laften",
+      "area"      : 90,
+      "floors"    : 1,
+      "realized"  : "2015-январь",
+      "thumb_img" : "data/projects/project-15001/img/project_pb-16_001.jpg"
+    },
     "15001" : {
       "id"        : "15001",
       "path"      : "data/projects/project-15001",
@@ -24,6 +35,17 @@
       "realized" : "2015-август",
       "thumb_img" : "data/projects/project-15002/img/project_pb-16_001.jpg"
     },
+    "15003" : {
+      "id"       : "15003",
+      "path"     : "data/projects/project-15002",
+      "code"     : "ПБ-15.003",
+      "type"     : "house",
+      "tech"     : "profiled-beam",
+      "area"     : 210,
+      "floors"   : 2,
+      "realized" : "2015-октябрь",
+      "thumb_img" : "data/projects/project-15002/img/project_pb-16_001.jpg"
+    },
     "16001" : {
       "id"       : "16001",
       "path"     : "data/projects/project-16001",
@@ -33,6 +55,17 @@
       "area"     : 40,
       "floors"   : 1,
       "realized" : "in-progress",
+      "thumb_img" : "data/projects/project-16001/img/project_pb-16_001.jpg"
+    },
+    "16002" : {
+      "id"       : "16002",
+      "path"     : "data/projects/project-16001",
+      "code"     : "ПБ-16.002",
+      "type"     : "bath-house",
+      "tech"     : "profiled-beam",
+      "area"     : 45,
+      "floors"   : 1,
+      "realized" : "2016-февраль",
       "thumb_img" : "data/projects/project-16001/img/project_pb-16_001.jpg"
     }
   }
