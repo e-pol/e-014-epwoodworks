@@ -64,7 +64,7 @@ define([
 
       console.log( '(ep-mod-hp) ' + this.id + ' initiated' );
 
-      this.setProjectsCollection( init_data.project_list );
+      this.setProjectsCollection( init_data );
     },
 
     // Begin Constructor method /setProjectsCollection/
@@ -82,25 +82,8 @@ define([
         stateMap.projects_collection =
           new ProjectsCollection( null, project_list_brief );
       }
-    },
-    // End Constructor method /setProjectsCollection/
-
-    // Begin Constructor method /setFiltersCollection/
-    //
-    // Example   : this.setFiltersCollection( {...} )
-    // Purpose   : create collection of filter models
-    // Arguments : filter list map in JSON format
-    // Action    :
-    //   * check if collection doesn`t exist, then create it
-    // Return    : none
-    // Throws    : none
-    //
-    setFiltersCollection : function ( filter_list ) {
-      if ( ! stateMap.filters_collection ) {
-        stateMap.filters_collection = new FiltersCollection( null, filter_list );
-      }
     }
-    // End Constructor method /setFiltersCollection/
+    // End Constructor method /setProjectsCollection/
 
   });
 

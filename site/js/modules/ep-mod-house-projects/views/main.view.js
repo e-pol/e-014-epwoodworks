@@ -36,12 +36,12 @@ define([
   'underscore',
   'backbone',
   'epModHP/models/main.model',
-  'epModHP/views/filters.view',
   'epModHP/views/projects.view',
+  'epModHP/views/project_detailed.view',
   'text!epModHP/templates/main.template.html'
 
   ], function( $, _, Backbonel,
-               model, FiltersView, ProjectsView,
+               model, ProjectsView, ProjectDetailedView,
                mainTemplate ) {
 
     "use strict";

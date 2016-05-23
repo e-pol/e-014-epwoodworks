@@ -26,6 +26,13 @@ define([
   var
     configMap = {
       ui : {
+        filter : {
+          class : {
+            container : 'ep-mod-house-projects-filters',
+            submit    : 'ep-mod-house-projects-filters-submit',
+            reset     : 'ep-mod-house-projects-filters-reset'
+          }
+        },
         sort : {
           class : {
             container : 'ep-mod-house-projects-collection-sort',
@@ -49,6 +56,17 @@ define([
 
     events : {
       'click #ep-mod-house-projects-collection-sort a' : 'onClickSort'
+    },
+
+    ui : {
+      filter : {
+        container : null,
+        submit    : null,
+        reset     : null
+      },
+      sort : {
+
+      }
     },
 
     //

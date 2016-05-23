@@ -14,12 +14,33 @@
  define
  */
 
+// Module API
+//
+// Purpose : define collection constructor
+//
+// Private methods:
+//   * initialize()
+//   * addProjectModels()
+//   * addProjectBriefModel()
+//   * changeOrderByKey()
+//   * setFilters()
+//   * setSimpleFilter()
+//   * applyFilters()
+//   * applySimpleFilter()
+//   * applyMinMaxFilter()
+//   * resetFilters()
+//
+// Public methods:
+//   * return Collection constructor
+//
+
 define([
   'jquery',
   'underscore',
   'backbone',
-  'epModHP/models/project_brief.model'
-  ], function ( $, _, Backbone, ProjectBriefModel ) {
+  'epModHP/models/project_brief.model',
+  'epModHP/collections/filters.collection'
+  ], function ( $, _, Backbone, ProjectBriefModel, FiltersCollection ) {
   "use strict";
 
 
@@ -65,12 +86,17 @@ define([
     // Return    : none
     // Throws    : none
     //
-    initialize : function ( models, init_data ) {
+    initialize : function ( models, model_data ) {
+      var project_list, filter_list;
+
       this.id = configMap.id;
+
+      project_list = model_data.project_list;
+      filter_list  = model_data.filter_list;
 
       console.log( '(ep-mod-hp) ' + this.id + ' initiated' );
 
-      this.addProjectModels( init_data );
+      this.addProjectModels( project_list );
 
       if ( true ) {
         this.changeOrderByKey( 'code', 'desc' );
@@ -99,6 +125,9 @@ define([
       });
 
       this.applyFilters();
+
+      new FiltersCollection( null, filter_list );
+
     },
     // End Constructor method /initialize/
 
