@@ -120,8 +120,82 @@ define([
     createFilter : function ( filter_data ) {
       var filterModel = new FilterModel( filter_data );
       this.add( filterModel );
-    }
+    },
     // End Constructor method /createFilter/
+
+    // Begin Constructor method /setFiltersState/
+    //
+    // Example   : this.setFiltersState( { <filters_state_map> } )
+    // Purpose   : set filters state
+    // Arguments : {Object}
+    // Action    :
+    //    *
+    // Return    : none
+    // Throw     : none
+    //
+    setFiltersState : function ( filters_state_map ) {
+      var
+        filter_state_map, filter_type, filter_type_regex,
+        filter_key, filter_key_regex;
+
+      for ( filter_state_map in filters_state_map ) {
+        if ( filters_state_map.hasOwnProperty( filter_state_map ) ) {
+
+          filter_key_regex  = /\w*/;
+          filter_key        = filter_state_map.match( filter_key_regex )[0];
+          filter_type_regex = /--(\w*)/;
+          filter_type       = filter_state_map.match( filter_type_regex )[1];
+
+          this.each( function ( filter_model ) {
+            if ( filter_model.get( 'key' ) === filter_key
+              && filter_model.get( 'filter_type' ) === filter_type) {
+
+              filter_model.setFilterState( {
+                filter_type : filter_type,
+                key         : filter_key,
+                values      : filters_state_map[ filter_state_map ]
+              } );
+            }
+          } )
+
+        }
+      }
+    },
+    // End Constructor method /setFiltersState/
+
+    // Begin Constructor method /getFiltersState/
+    //
+    // Example   : this.getFiltersState()
+    // Purpose   : get filters state map as object
+    // Arguments : none
+    // Action    :
+    //    * get filter state props from filter state map
+    //    * add them to empty object
+    //    * add filter state object to filters state map
+    //    * return filters state map
+    // Return    : {Object} Filters state map
+    // Throw     : none
+    //
+    getFiltersState : function () {
+      var
+        filters_state = {},
+        key, values, filter_type, filter_id, filter_state_map;
+
+      this.each( function( filter_model ) {
+        filter_state_map = filter_model.getFilterState();
+        key         = filter_state_map.key;
+        filter_type = filter_state_map.filter_type;
+        values      = filter_state_map.values;
+        filter_id = key + '--' + filter_type;
+        filters_state[ filter_id ] = values;
+      } );
+      return { filter_state_list : filters_state };
+    },
+    // End Constructor method /getFiltersState/
+
+    stringifyFiltersStateMap : function ( filters_state_map ) {
+
+    }
 
   });
 

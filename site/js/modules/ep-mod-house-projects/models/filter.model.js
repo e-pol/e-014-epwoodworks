@@ -18,14 +18,22 @@
 //   * return Filter Model constructor
 //
 // Model methods:
-//   * validateFilterType()
-//   * validateFilterValues()
-//   * createFilter()
-//   * createSimple()
-//   * createMinMax()
-//   * getFilterStateJSON()
-//   * setFilterStateJSON()
-
+//   * validateFilterType()    +
+//   * validateFilterValues()  +
+//
+//   * createFilter()          +
+//   * createSimple()          +
+//   * createMinMax()          +
+//
+//   * getFilterState()        +
+//   * setFilterState()        -
+//
+//   * getSimpleFilterState()  +
+//   * setSimpleFilterState()  -
+//
+//   * getMinMaxFilterState()  +
+//   * setMinMaxFilterState()  -
+//
 define([
    'backbone'
   ], function ( Backbone ) {
@@ -44,24 +52,22 @@ define([
 
   FilterModel = Backbone.Model.extend({
     defaults : {
-      type        : 'simple',
+      filter_type : 'simple',
       key         : null,
-      is_selected : false,
       values      : []
     },
 
     valid : {
-      types : [ 'simple', 'min_max' ]
+      filter_type_list : [ 'simple', 'min_max' ]
     },
 
     initialize : function() {
       this.isValid();
-      this.createFilter( this.get( 'type' ) );
-      console.log( this.getFilterStateJSON() );
+      this.createFilter( this.get( 'filter_type' ) );
     },
 
     validate : function() {
-      this.validateFilterType( this.get( 'type' ) );
+      this.validateFilterType( this.get( 'filter_type' ) );
       this.validateFilterValues( this.get( 'values' ) );
     },
 
@@ -80,7 +86,7 @@ define([
     //
     validateFilterType : function( filter_type ) {
       if ( typeof filter_type === 'string'
-        && this.valid.types.indexOf( filter_type ) >= 0 ) {
+        && this.valid.filter_type_list.indexOf( filter_type ) >= 0 ) {
         return true;
       }
       throw new Error( 'Invalid filter type : | ' + filter_type + ' | . Allowed types are: | ' + this.valid.types.join(' | ') + ' |');
@@ -184,31 +190,32 @@ define([
     },
     // End Constructor method /createMinMax/
 
-    // Begin Constructor method /getFilterStateJSON/
+    // Begin Constructor method /getFilterState/
     //
-    // Example   : this.getFilterStateJSON()
+    // Example   : this.getFilterState()
     // Purpose   : get filter state map in JSON format
     // Arguments : none
     // Action    :
     //   *
     // Throw     : none
     //
-    getFilterStateJSON : function () {
-      switch ( this.get( 'type' ) ) {
+    getFilterState : function () {
+      switch ( this.get( 'filter_type' ) ) {
         case 'simple':
-          return this.getSimpleFilterStateJSON();
+          return this.getSimpleFilterState();
           break;
 
         case 'min_max':
+          return this.getMinMaxFilterState();
           break;
       }
       return false;
     },
-    // End Constructor method /getFilterStateJSON/
+    // End Constructor method /getFilterState/
 
-    // Begin Constructor method /getSimpleFilterStateJSON/
+    // Begin Constructor method /getSimpleFilterState/
     //
-    // Example   : this.getSimpleFilterStateJSON()
+    // Example   : this.getSimpleFilterState()
     // Purpose   : get simple filter state in JSON format
     // Arguments : none
     // Action    :
@@ -219,12 +226,12 @@ define([
     // Return    : filter state map in JSON format
     // Throw     : none
     //
-    getSimpleFilterStateJSON : function () {
+    getSimpleFilterState : function () {
       var state_map = {};
 
-      state_map.type   = this.get( 'type' );
-      state_map.key    = this.get( 'key' );
-      state_map.values = [];
+      state_map.filter_type = this.get( 'filter_type' );
+      state_map.key         = this.get( 'key' );
+      state_map.values      = [];
 
       this.get( 'values' ).forEach( function( value_map ) {
         if ( value_map.is_selected ) {
@@ -234,22 +241,127 @@ define([
 
       return state_map;
     },
-    // End Constructor method /getSimpleFilterStateJSON/
+    // End Constructor method /getSimpleFilterState/
 
-    // Begin Constructor method /getFilterStateJSON/
+    // Begin Constructor method /getMinMaxFilterState/
     //
-    // Example   : this.setFilterStateJSON( { type :  } )
-    // Purpose   : set filter state from map in JSON format
-    // Arguments :
+    // Example   : this.getMinMaxFilterState()
+    // Purpose   : get min_max filter state in JSON format
+    // Arguments : none
     // Action    :
-    //   *
+    //   * create empty filter map
+    //   * set filter`s props
+    //   * add min and max values to values array
+    //   * return filter map
     // Return    : filter state map in JSON format
     // Throw     : none
     //
-    setFilterStateJSON : function ( state_map ) {
+    getMinMaxFilterState : function () {
+      var state_map = {};
 
+      state_map.filter_type = this.get( 'filter_type' );
+      state_map.key         = this.get( 'key' );
+      state_map.values      = [
+        this.get( 'values' ).min,
+        this.get( 'values' ).max ];
+
+      return state_map;
+    },
+    // End Constructor method /getMinMaxFilterState/
+
+    // Begin Constructor method /setFilterState/
+    //
+    // Example   : this.setFilterState( { <proposed_state_map> } )
+    // Purpose   : set filter state from state map
+    // Arguments :
+    //   * prop_state_map {Object} - proposed filter state map
+    // Action    :
+    //   * invoke method for proper filter type
+    // Return    : none
+    // Throw     : none
+    //
+    setFilterState : function ( state_map ) {
+      var filter_type = state_map.filter_type;
+
+      if ( this.get( 'filter_type' ) !== filter_type ) {
+        return;
+      }
+      switch ( filter_type ) {
+        case "simple":
+          this.setSimpleFilterState( state_map );
+          break;
+
+        case "min_max":
+          this.setMinMaxFilterState( state_map );
+          break;
+      }
+    },
+    // End Constructor method /setFilterState/
+
+    // Begin Constructor method /setSimpleFilterState/
+    //
+    // Example   : this.setSimpleFilterState( { <proposed_state_map> } )
+    // Purpose   : set filter state from state map
+    // Arguments :
+    //   * prop_state_map {Object} - proposed filter state map
+    // Action    :
+    //   * get previous and proposed key values to use for filtering
+    //   * set proposed values to 'selected' ( is_selected = true )
+    //   * set other values to 'not selected' ( is_selected = false )
+    // Return    : none
+    // Throw     : none
+    //
+    setSimpleFilterState : function ( prop_state_map ) {
+      var prev_values, prop_values;
+
+      prev_values = this.get( 'values' );
+      prop_values = prop_state_map.values;
+
+      prop_values.forEach( function ( prop_value ) {
+        prev_values.forEach( function ( prev_value_map ) {
+          if ( prev_value_map.value ===  prop_value ) {
+            prev_value_map.is_selected = true;
+          } else {
+            prev_value_map.is_selected = false;
+          }
+        } )
+      } );
+    },
+
+    // Begin Constructor method /setMinMaxFilterState/
+    //
+    // Example   : this.setMinMaxFilterState( { <proposed_state_map> } )
+    // Purpose   : set filter state from state map
+    // Arguments :
+    //   * prop_state_map {Object} - proposed filter state map
+    // Action    :
+    //   * get previous and proposed key values
+    //   * compare them
+    //   * update previous values if they differ
+    // Return    : none
+    // Throw     : none
+    //
+    setMinMaxFilterState : function ( prop_state_map ) {
+      var prev_min, prev_max, prop_min, prop_max, rev_values;
+
+      prev_min = this.get( 'values' ).min;
+      prev_max = this.get( 'values' ).max;
+
+      prop_min = prop_state_map.values[0];
+      prop_max = prop_state_map.values[1];
+
+      if ( prev_min !== prop_max || prev_max !== prop_max ) {
+
+        rev_values = {
+          min : prop_min,
+          max : prop_max
+        };
+
+        this.set({ values : rev_values  });
+      }
     }
-    // End Constructor method /setFilterStateJSON/
+    // End Constructor method /setMinMaxFilterState/
+
 
   });
 

@@ -4,17 +4,17 @@
   "language"       : {
     "ru" : {
       "key_list" : {
-        "area"   : "площадь",
-        "floors" : "этажи",
-        "type"   : "тип",
-        "tech"   : "технология"
+        "area"        : "площадь",
+        "floors"      : "этажи",
+        "filter_type" : "тип",
+        "tech"        : "технология"
       },
       "key_value_list" : {
         "tech"   : {
           "profiled-beam" : "профилированный брус",
           "laften"        : "лафет"
         },
-        "type"   : {
+        "filter_type"   : {
           "house"      : "дом",
           "bath-house" : "баня"
         }
@@ -23,24 +23,24 @@
   },
   "filter_list"    : [
     {
-      "type"   : "min_max",
-      "key"    : "area",
-      "values" : [ 0, 300 ]
+      "filter_type" : "min_max",
+      "key"         : "area",
+      "values"      : [ 0, 300 ]
     },
     {
-      "type"   : "simple",
-      "key"    : "floors",
-      "values" : [ 1, 2 ]
+      "filter_type" : "simple",
+      "key"         : "floors",
+      "values"      : [ 1, 2 ]
     },
     {
-      "type"   : "simple",
-      "key"    : "type",
-      "values" : [ "house", "bath-house" ]
+      "filter_type" : "simple",
+      "key"         : "type",
+      "values"      : [ "house", "bath-house" ]
     },
     {
-      "type"   : "simple",
-      "key"    : "tech",
-      "values" : [ "profiled-beam", "laften" ]
+      "filter_type" : "simple",
+      "key"         : "tech",
+      "values"      : [ "profiled-beam", "laften" ]
     }
   ],
   "project_list" : {
