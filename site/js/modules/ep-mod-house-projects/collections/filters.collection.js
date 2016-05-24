@@ -32,16 +32,19 @@
 //   * module returns filters collection object constructor
 //
 // Constructor methods:
-//   * createFilters( <filters_map> ) - create filters from a map (JSON)
-//   * createFilter( <filter_map> ) - create filter Backbone model
-//   * setFilters( <filters_map> ) - set and update filters states
-//     from a map (JSON)
-//   * setFilter( <filter_map> ) - set and update filter model
-//   * getFiltersState() - return filters state map as JSON to client
-//   * getFilterState() - create filter model state map as JSON
-//   * stringifyFiltersState() - converts filters state JSON to string
-//   * parseFiltersState() - parses filters state JSON from string
-
+//
+//   * createFilters( <filters_map> )
+//     - create filters from a map for all filters {Object}
+//
+//   * createFilter( <filter_map> )
+//     - create filter Backbone model from a single filter map {Object}
+//
+//   * setFiltersState( <filters_map> )
+//     - set and update filters states from a map for all filters {Object}
+//
+//   * getFiltersState()
+//     - return all filters state map as {Object} to client
+//
 define([
   'backbone',
   'epModHP/models/filter.model'
@@ -52,10 +55,7 @@ define([
 
   // ----------------- BEGIN MODULE SCOPE VARIABLES -----------------------
 
-  var
-    configMap = {},
-
-    FiltersCollection, getConstructor, config;
+  var FiltersCollection;
 
   // ------------------- END MODULE SCOPE VARIABLES -----------------------
 
@@ -160,6 +160,8 @@ define([
 
         }
       }
+
+      this.trigger( 'filtersStateChange', this.getFiltersState() );
     },
     // End Constructor method /setFiltersState/
 
@@ -186,16 +188,15 @@ define([
         key         = filter_state_map.key;
         filter_type = filter_state_map.filter_type;
         values      = filter_state_map.values;
-        filter_id = key + '--' + filter_type;
-        filters_state[ filter_id ] = values;
+        filter_id   = key + '--' + filter_type;
+
+        if ( values.length > 0 ) {
+          filters_state[ filter_id ] = values;
+        }
       } );
       return { filter_state_list : filters_state };
-    },
-    // End Constructor method /getFiltersState/
-
-    stringifyFiltersStateMap : function ( filters_state_map ) {
-
     }
+    // End Constructor method /getFiltersState/
 
   });
 

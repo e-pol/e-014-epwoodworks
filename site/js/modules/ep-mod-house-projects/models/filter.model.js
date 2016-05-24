@@ -174,6 +174,7 @@ define([
     //   * cache model 'values' attribute, min and max values,
     //     create revised values obj
     //   * set model 'values' attribute to revised values
+    //   * store initial value for reset
     // Return    : none
     // Throw     : none
     //
@@ -185,6 +186,12 @@ define([
           min : min,
           max : max
         };
+
+      this.min_max = {
+        initial_values : {
+          min : min,
+          max : max
+      } };
 
       this.set({ values : rev_values });
     },
@@ -306,27 +313,23 @@ define([
     //   * prop_state_map {Object} - proposed filter state map
     // Action    :
     //   * get previous and proposed key values to use for filtering
-    //   * set proposed values to 'selected' ( is_selected = true )
-    //   * set other values to 'not selected' ( is_selected = false )
+    //   * set every value to 'not selected' ( is_selected = false )
+    //   * set proposed values to 'selected' ( is_Selected = true )
     // Return    : none
     // Throw     : none
     //
     setSimpleFilterState : function ( prop_state_map ) {
-      var prev_values, prop_values;
+      var prev_values, prop_values, rev_is_selected;
 
       prev_values = this.get( 'values' );
       prop_values = prop_state_map.values;
 
-      prop_values.forEach( function ( prop_value ) {
-        prev_values.forEach( function ( prev_value_map ) {
-          if ( prev_value_map.value ===  prop_value ) {
-            prev_value_map.is_selected = true;
-          } else {
-            prev_value_map.is_selected = false;
-          }
-        } )
+      prev_values.forEach( function ( value_map, index ) {
+        prev_values[ index ].is_selected
+          = ( ! ( prop_values.indexOf( value_map.value )  < 0 ) )
       } );
     },
+    // End Constructor method /setSimpleFilter/
 
     // Begin Constructor method /setMinMaxFilterState/
     //
@@ -359,8 +362,18 @@ define([
 
         this.set({ values : rev_values  });
       }
-    }
+    },
     // End Constructor method /setMinMaxFilterState/
+
+    resetFilter : function () {
+      switch ( this.get( 'filter_type' ) ) {
+        case 'simple':
+          this.get( 'values' ).forEach( function ( value_map ) {
+            value_map.is_selected = false;
+          } );
+          break;
+      }
+    }
 
 
   });
